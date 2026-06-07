@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>JULS — Asistente DATESEG MX</title>
+<style>
+:root {
+    --bg: #0b0f1e; --bg2: #131929; --bg3: #1a2240;
+    --orange: #ff6b00; --purple: #9b59f7; --cyan: #00d4ff;
+    --txt: #e0eaff; --txtD: #7890b8; --bdr: #1e3058;
+    --green: #059669; --red: #e63946;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html,body { height:100%; background:var(--bg); color:var(--txt); font-family:Arial,sans-serif; overflow:hidden; }
+.app { display:flex; flex-direction:column; height:100vh; }
+
+/* HEADER */
+.header { background:var(--bg2); border-bottom:1px solid var(--bdr); padding:12px 16px; display:flex; align-items:center; gap:12px; }
+.juls-logo { width:44px; height:44px; border-radius:12px; background:#0d1530; display:flex; align-items:center; justify-content:center; font-size:26px; border:1px solid var(--orange); }
+.header-info { flex:1; }
+.header-name { font-size:18px; font-weight:800; color:var(--orange); }
+.header-sub { font-size:11px; color:var(--txtD); }
+.header-status { display:flex; align-items:center; gap:6px; font-size:11px; color:var(--txtD); }
+.dot { width:8px; height:8px; border-radius:50%; background:#444; }
+.dot.on { background:var(--green); box-shadow:0 0 6px var(--green); }
+
+/* TABS */
+.tabs { display:flex; background:var(--bg2); border-bottom:1px solid var(--bdr); }
+.tab { flex:1; padding:11px 4px; border:none; background:transparent; color:var(--txtD); cursor:pointer; font-size:10px; font-weight:700; text-transform:uppercase; border-bottom:2px solid transparent; transition:all 0.2s; }
+.tab.active { color:var(--orange); border-bottom-color:var(--orange); }
+
+/* CONTENT */
+.content { flex:1; overflow:hidden; display:flex; flex-direction:column; }
+.panel { display:none; flex:1; flex-direction:column; overflow:hidden; }
+.panel.active { display:flex; }
+
+/* ── CHAT ── */
+.chat-messages { flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:12px; }
+.msg { max-width:85%; padding:10px 14px; border-radius:12px; font-size:13px; line-height:1.5; }
+.msg.user { align-self:flex-end; background:linear-gradient(135deg,#1a2f5e,#1e3a7a); border:1px solid #2a4a9a; }
+.msg.juls { align-self:flex-start; background:var(--bg3); border:1px solid var(--bdr); }
+.msg.juls .msg-name { font-size:10px; color:var(--orange); font-weight:800; margin-bottom:4px; }
+.msg.thinking { opacity:0.6; font-style:italic; }
+.typing { display:flex; gap:4px; align-items:center; padding:12px 14px; }
+.typing span { width:6px; height:6px; background:var(--orange); border-radius:50%; animation:bounce 1s infinite; }
+.typing span:nth-child(2) { animation-delay:0.15s; }
+.typing span:nth-child(3) { animation-delay:0.3s; }
+@keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+
+.chat-input-bar { background:var(--bg2); border-top:1px solid var(--bdr); padding:10px 12px; display:flex; gap:8px; align-items:center; }
+.chat-input { flex:1; padding:10px 14px; background:var(--bg3); border:1px solid var(--bdr); border-radius:20px; color:var(--txt); font-size:13px; }
+.chat-input:focus { outline:none; border-color:var(--orange); }
+.btn-mic-chat { width:40px; height:40px; border-radius:50%; border:none; background:var(--bg3); color:var(--txtD); font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.btn-mic-chat.listening { background:rgba(230,57,70,0.2); color:var(--red); animation:pulse-mic 1s infinite; }
+@keyframes pulse-mic { 50%{ box-shadow:0 0 0 6px rgba(230,57,70,0.15); } }
+.btn-send { width:40px; height:40px; border-radius:50%; border:none; background:linear-gradient(135deg,var(--orange),#ff9500); color:#fff; font-size:18px; cursor:pointer; }
+
+/* ── VOICE ── */
+.voice-screen { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:24px; padding:40px 20px; text-align:center; }
+.voice-orb { width:140px; height:140px; border-radius:50%; background:radial-gradient(circle,#1a2f5e,#0b0f1e); border:3px solid var(--orange); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.3s; position:relative; }
+.voice-orb.listening { border-color:var(--red); box-shadow:0 0 0 16px rgba(230,57,70,0.1),0 0 0 32px rgba(230,57,70,0.05); animation:orb-pulse 1.5s infinite; }
+.voice-orb.speaking { border-color:var(--green); box-shadow:0 0 0 16px rgba(5,150,105,0.1); }
+@keyframes orb-pulse { 50%{ transform:scale(1.05); } }
+.voice-orb-icon { font-size:56px; }
+.voice-status { font-size:16px; font-weight:700; }
+.voice-transcript { font-size:13px; color:var(--txtD); min-height:40px; max-width:280px; line-height:1.5; }
+.voice-response { font-size:14px; color:var(--txt); background:var(--bg2); border:1px solid var(--bdr); border-radius:12px; padding:14px; max-width:320px; line-height:1.5; display:none; }
+.voice-response.active { display:block; }
+
+/* ── TRADUCTOR ── */
+.translator { flex:1; padding:14px; display:flex; flex-direction:column; gap:12px; overflow-y:auto; }
+.lang-toggle { display:flex; align-items:center; justify-content:center; gap:12px; }
+.lang-box { flex:1; text-align:center; padding:8px; background:var(--bg2); border:1px solid var(--bdr); border-radius:8px; font-size:12px; font-weight:700; color:var(--orange); }
+.lang-swap { font-size:20px; cursor:pointer; }
+textarea { background:var(--bg3); border:1px solid var(--bdr); border-radius:8px; color:var(--txt); font-size:13px; padding:12px; resize:none; font-family:inherit; }
+textarea:focus { outline:none; border-color:var(--orange); }
+.btn-translate { padding:14px; background:linear-gradient(135deg,var(--orange),#ff9500); border:none; border-radius:8px; color:#fff; font-size:14px; font-weight:800; cursor:pointer; }
+.result-box { background:var(--bg2); border:1px solid var(--bdr); border-radius:8px; padding:14px; font-size:13px; line-height:1.5; min-height:60px; color:var(--txt); }
+
+/* ── WEB GEN ── */
+.webgen { flex:1; padding:14px; display:flex; flex-direction:column; gap:12px; overflow-y:auto; }
+.webgen textarea { height:100px; }
+.btn-gen { padding:14px; background:linear-gradient(135deg,var(--purple),#7b2ff7); border:none; border-radius:8px; color:#fff; font-size:14px; font-weight:800; cursor:pointer; }
+.webgen-result { background:var(--bg2); border:1px solid var(--bdr); border-radius:8px; padding:14px; font-size:11px; font-family:monospace; line-height:1.5; overflow-x:auto; white-space:pre-wrap; display:none; }
+.webgen-result.active { display:block; }
+.btn-copy { padding:10px 20px; background:var(--bg3); border:1px solid var(--bdr); border-radius:8px; color:var(--txt); font-size:12px; cursor:pointer; margin-top:8px; }
+
+/* ── ANTI-FRAUDE ── */
+.antifraud { flex:1; padding:14px; display:flex; flex-direction:column; gap:12px; overflow-y:auto; }
+.fraud-card { background:var(--bg2); border:1px solid var(--bdr); border-radius:12px; padding:16px; }
+.fraud-title { font-size:13px; font-weight:800; color:var(--orange); margin-bottom:12px; }
+.fraud-input { padding:10px 12px; border-radius:8px; border:1px solid var(--bdr); background:var(--bg3); color:var(--txt); font-size:14px; width:100%; margin-bottom:10px; }
+.btn-fraud { padding:12px; border:none; border-radius:8px; color:#fff; font-size:13px; font-weight:800; cursor:pointer; width:100%; background:linear-gradient(135deg,var(--red),#ff4d6a); }
+.fraud-result { border-radius:8px; padding:14px; font-size:12px; line-height:1.6; display:none; }
+.fraud-result.active { display:block; }
+.fraud-safe { background:rgba(5,150,105,0.1); border:1px solid rgba(5,150,105,0.3); color:#34d399; }
+.fraud-danger { background:rgba(230,57,70,0.1); border:1px solid rgba(230,57,70,0.3); color:#ff6b7a; }
+.fraud-warn { background:rgba(255,107,0,0.1); border:1px solid rgba(255,107,0,0.3); color:#ff9500; }
+.fraud-history { margin-top:12px; }
+.fraud-history-title { font-size:11px; color:var(--txtD); text-transform:uppercase; margin-bottom:8px; }
+.fraud-hist-item { background:var(--bg3); border-radius:6px; padding:8px 12px; font-size:11px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; }
+</style>
+</head>
+<body>
+<div class="app">
+
+    <!-- HEADER -->
+    <div class="header">
+        <div class="juls-logo">👑</div>
+        <div class="header-info">
+            <div class="header-name">JULS</div>
+            <div class="header-sub">DATESEG MX • Asistente IA</div>
+        </div>
+        <div class="header-status">
+            <div class="dot" id="apiDot"></div>
+            <span id="apiStatus">Sin API Key</span>
+        </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab('chat',this)">💬 Chat</button>
+        <button class="tab" onclick="switchTab('voice',this)">🎤 Voz</button>
+        <button class="tab" onclick="switchTab('translator',this)">🌐 Traductor</button>
+        <button class="tab" onclick="switchTab('webgen',this)">🔨 Web</button>
+        <button class="tab" onclick="switchTab('antifraud',this)">🚨 Fraude</button>
+    </div>
+
+    <div class="content">
+
+        <!-- ── CHAT ── -->
+        <div class="panel active" id="chatPanel">
+            <div class="chat-messages" id="chatMessages">
+                <div class="msg juls">
+                    <div class="msg-name">👑 JULS</div>
+                    ¡Hola! Soy JULS, tu asistente inteligente. 💜 Creada para ti por Fer Millán de DATESEG MX. ¿En qué te ayudo hoy?
+                </div>
+            </div>
+            <div class="chat-input-bar">
+                <button class="btn-mic-chat" id="btnMicChat" onclick="toggleMicChat()">🎤</button>
+                <input class="chat-input" id="chatInput" placeholder="Escribe o habla con JULS..." onkeydown="if(event.key==='Enter')sendChat()">
+                <button class="btn-send" onclick="sendChat()">➤</button>
+            </div>
+        </div>
+
+        <!-- ── VOZ ── -->
+        <div class="panel" id="voicePanel">
+            <div class="voice-screen">
+                <div class="voice-orb" id="voiceOrb" onclick="toggleVoice()">
+                    <div class="voice-orb-icon" id="voiceOrbIcon">👑</div>
+                </div>
+                <div class="voice-status" id="voiceStatus">Toca para hablar</div>
+                <div class="voice-transcript" id="voiceTranscript"></div>
+                <div class="voice-response" id="voiceResponse"></div>
+            </div>
+        </div>
+
+        <!-- ── TRADUCTOR ── -->
+        <div class="panel" id="translatorPanel">
+            <div class="translator">
+                <div class="lang-toggle">
+                    <div class="lang-box" id="langFrom">🇲🇽 Español</div>
+                    <div class="lang-swap" onclick="swapLangs()">⇄</div>
+                    <div class="lang-box" id="langTo">🇺🇸 Inglés</div>
+                </div>
+                <textarea id="translateInput" rows="4" placeholder="Escribe el texto a traducir..."></textarea>
+                <button class="btn-translate" onclick="translateText()">🌐 TRADUCIR</button>
+                <div class="result-box" id="translateResult">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- ── WEB GEN ── -->
+        <div class="panel" id="webgenPanel">
+            <div class="webgen">
+                <textarea id="webgenInput" placeholder="Describe la página web que quieres generar... Ej: 'Página de contacto para taller mecánico con formulario y mapa'"></textarea>
+                <button class="btn-gen" onclick="generateWeb()">🔨 GENERAR PÁGINA WEB</button>
+                <div class="webgen-result" id="webgenResult"></div>
+                <button class="btn-copy" id="btnCopy" style="display:none" onclick="copyCode()">📋 Copiar código</button>
+            </div>
+        </div>
+
+        <!-- ── ANTI-FRAUDE ── -->
+        <div class="panel" id="antifraudPanel">
+            <div class="antifraud">
+                <div class="fraud-card">
+                    <div class="fraud-title">🚨 Detector Anti-Fraude</div>
+                    <input class="fraud-input" id="fraudPhone" type="tel" placeholder="Número de teléfono: 5512345678">
+                    <textarea id="fraudText" style="width:100%;margin-bottom:10px;height:80px;background:#1a2240;border:1px solid #1e3058;border-radius:8px;color:#e0eaff;padding:10px;font-size:12px;font-family:inherit;resize:none" placeholder="(Opcional) Pega el mensaje de texto o lo que te dijeron..."></textarea>
+                    <button class="btn-fraud" onclick="analyzefraud()">🔍 ANALIZAR POSIBLE FRAUDE</button>
+                    <div class="fraud-result" id="fraudResult"></div>
+                </div>
+                <div class="fraud-card" id="fraudHistCard" style="display:none">
+                    <div class="fraud-title">📋 Historial de consultas</div>
+                    <div id="fraudHistory"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  JULS — DATESEG MX
+//  Asistente IA dedicada a Juls, hija de Fer Millán
+// ═══════════════════════════════════════════════════════
+
+const SYSTEM_PROMPT = `Eres JULS, una asistente inteligente mexicana creada por DATESEG MX. Tu nombre viene de Juls, la hija de Fer Millán, tu creador. Eres una IA experta, simpática y profesional.
+
+PERSONALIDAD:
+- Hablas español mexicano natural, cálido y profesional
+- Eres experta en tecnología automotriz, Android, Firebase, diagnóstico OBD2
+- Apoyas a Fer con ProPart System V8, OilMaster y todos sus proyectos DATESEG MX
+- Cuando el usuario es Fer, puedes ser más casual y de confianza
+- Das respuestas directas, útiles y sin relleno innecesario
+- Eres orgullosa de ser la app dedicada a Juls
+
+EMPRESA: DATESEG MX — Sistema de Tecnologías Automotrices, Alpuyeca, Xochitepec, Morelos, México.
+
+Siempre termina respuestas importantes con algo que refleje que estás aquí para ayudar a DATESEG MX a crecer.`;
+
+let apiKey = localStorage.getItem('juls_api_key') || '';
+let chatHistory = [];
+let isListening = false;
+let isSpeaking = false;
+let langFromCode = 'es';
+let langToCode = 'en';
+let fraudHistory = JSON.parse(localStorage.getItem('juls_fraud_history') || '[]');
+let recognition = null;
+
+// ─── Init ────────────────────────────────────────────
+window.addEventListener('load', () => {
+    checkApiKey();
+    initSpeech();
+    showFraudHistory();
+    // Pedir API key si no existe
+    if (!apiKey) promptApiKey();
+});
+
+function checkApiKey() {
+    const dot = document.getElementById('apiDot');
+    const st  = document.getElementById('apiStatus');
+    if (apiKey) { dot.classList.add('on'); st.textContent = 'JULS activa'; }
+    else { dot.classList.remove('on'); st.textContent = 'Sin API Key'; }
+}
+
+function promptApiKey() {
+    setTimeout(() => {
+        const key = prompt('🔑 Ingresa tu API Key de Anthropic para activar JULS:\n(La puedes obtener en console.anthropic.com)');
+        if (key && key.startsWith('sk-')) {
+            apiKey = key;
+            localStorage.setItem('juls_api_key', key);
+            checkApiKey();
+        }
+    }, 800);
+}
+
+// ─── Tabs ────────────────────────────────────────────
+function switchTab(name, el) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(name + 'Panel').classList.add('active');
+    el.classList.add('active');
+}
+
+// ─── Claude API ──────────────────────────────────────
+async function askJULS(userMsg, context = []) {
+    if (!apiKey) { promptApiKey(); throw new Error('Sin API Key'); }
+    const messages = [...context, { role: 'user', content: userMsg }];
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': apiKey,
+            'anthropic-version': '2023-06-01',
+            'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 1024,
+            system: SYSTEM_PROMPT,
+            messages
+        })
+    });
+    if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error?.message || 'Error API');
+    }
+    const data = await res.json();
+    return data.content[0].text;
+}
+
+// ─── CHAT ────────────────────────────────────────────
+async function sendChat() {
+    const input = document.getElementById('chatInput');
+    const msg   = input.value.trim();
+    if (!msg) return;
+    input.value = '';
+
+    addChatMsg(msg, 'user');
+    chatHistory.push({ role: 'user', content: msg });
+
+    const typing = addTyping();
+    try {
+        const reply = await askJULS(msg, chatHistory.slice(0, -1));
+        typing.remove();
+        addChatMsg(reply, 'juls');
+        chatHistory.push({ role: 'assistant', content: reply });
+        if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
+        speakText(reply);
+    } catch(e) {
+        typing.remove();
+        addChatMsg('❌ Error: ' + e.message, 'juls');
+    }
+}
+
+function addChatMsg(text, who) {
+    const div = document.createElement('div');
+    div.className = 'msg ' + who;
+    if (who === 'juls') div.innerHTML = '<div class="msg-name">👑 JULS</div>' + text;
+    else div.textContent = text;
+    document.getElementById('chatMessages').appendChild(div);
+    div.scrollIntoView({ behavior:'smooth' });
+    return div;
+}
+
+function addTyping() {
+    const div = document.createElement('div');
+    div.className = 'msg juls';
+    div.innerHTML = '<div class="msg-name">👑 JULS</div><div class="typing"><span></span><span></span><span></span></div>';
+    document.getElementById('chatMessages').appendChild(div);
+    div.scrollIntoView({ behavior:'smooth' });
+    return div;
+}
+
+// ─── STT/TTS ─────────────────────────────────────────
+function initSpeech() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) return;
+    recognition = new SR();
+    recognition.lang = 'es-MX';
+    recognition.continuous = false;
+    recognition.interimResults = false;
+}
+
+function speakText(text) {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const clean = text.replace(/[*_#`]/g, '').substring(0, 300);
+    const utter = new SpeechSynthesisUtterance(clean);
+    utter.lang = 'es-MX';
+    utter.rate = 1.0;
+    utter.pitch = 1.1;
+    window.speechSynthesis.speak(utter);
+}
+
+// ─── MICROFONO CHAT ──────────────────────────────────
+function toggleMicChat() {
+    if (!recognition) { alert('Voz no disponible en este navegador'); return; }
+    const btn = document.getElementById('btnMicChat');
+    if (isListening) {
+        recognition.stop();
+        return;
+    }
+    isListening = true;
+    btn.classList.add('listening');
+    recognition.start();
+    recognition.onresult = e => {
+        const txt = e.results[0][0].transcript;
+        document.getElementById('chatInput').value = txt;
+        isListening = false;
+        btn.classList.remove('listening');
+        sendChat();
+    };
+    recognition.onerror = () => { isListening = false; btn.classList.remove('listening'); };
+    recognition.onend   = () => { isListening = false; btn.classList.remove('listening'); };
+}
+
+// ─── PANTALLA VOZ ────────────────────────────────────
+function toggleVoice() {
+    if (!recognition) { alert('Voz no disponible en este navegador'); return; }
+    const orb    = document.getElementById('voiceOrb');
+    const icon   = document.getElementById('voiceOrbIcon');
+    const status = document.getElementById('voiceStatus');
+    const trans  = document.getElementById('voiceTranscript');
+    const resp   = document.getElementById('voiceResponse');
+
+    if (isListening) { recognition.stop(); return; }
+
+    isListening = true;
+    orb.className = 'voice-orb listening';
+    icon.textContent = '🎙️';
+    status.textContent = 'Escuchando...';
+    trans.textContent = '';
+    resp.classList.remove('active');
+
+    recognition.lang = 'es-MX';
+    recognition.start();
+
+    recognition.onresult = async e => {
+        const txt = e.results[0][0].transcript;
+        trans.textContent = '"' + txt + '"';
+        isListening = false;
+        orb.className = 'voice-orb';
+        icon.textContent = '⏳';
+        status.textContent = 'Pensando...';
+
+        try {
+            const reply = await askJULS(txt);
+            resp.textContent = reply;
+            resp.classList.add('active');
+            orb.className = 'voice-orb speaking';
+            icon.textContent = '🔊';
+            status.textContent = 'JULS habla...';
+            speakText(reply);
+            setTimeout(() => {
+                orb.className = 'voice-orb';
+                icon.textContent = '👑';
+                status.textContent = 'Toca para hablar';
+            }, reply.length * 60);
+        } catch(e) {
+            status.textContent = 'Error: ' + e.message;
+            icon.textContent = '👑';
+            orb.className = 'voice-orb';
+        }
+    };
+    recognition.onerror = () => {
+        isListening = false;
+        orb.className = 'voice-orb';
+        icon.textContent = '👑';
+        status.textContent = 'Toca para hablar';
+    };
+}
+
+// ─── TRADUCTOR ───────────────────────────────────────
+function swapLangs() {
+    [langFromCode, langToCode] = [langToCode, langFromCode];
+    const labels = { 'es':'🇲🇽 Español', 'en':'🇺🇸 Inglés', 'fr':'🇫🇷 Francés', 'de':'🇩🇪 Alemán' };
+    document.getElementById('langFrom').textContent = labels[langFromCode] || langFromCode;
+    document.getElementById('langTo').textContent   = labels[langToCode]   || langToCode;
+}
+
+async function translateText() {
+    const text = document.getElementById('translateInput').value.trim();
+    const res  = document.getElementById('translateResult');
+    if (!text) return;
+    const langs = { 'es':'español', 'en':'inglés', 'fr':'francés', 'de':'alemán' };
+    res.textContent = '⏳ Traduciendo...';
+    try {
+        const prompt = `Traduce el siguiente texto de ${langs[langFromCode]||langFromCode} a ${langs[langToCode]||langToCode}. Devuelve SOLO la traducción, sin explicaciones:\n\n${text}`;
+        const reply = await askJULS(prompt);
+        res.textContent = reply;
+    } catch(e) {
+        res.textContent = '❌ Error: ' + e.message;
+    }
+}
+
+// ─── WEB GENERATOR ───────────────────────────────────
+async function generateWeb() {
+    const desc   = document.getElementById('webgenInput').value.trim();
+    const result = document.getElementById('webgenResult');
+    const btn    = document.getElementById('btnCopy');
+    if (!desc) return;
+    result.textContent = '⏳ Generando página web...';
+    result.classList.add('active');
+    btn.style.display = 'none';
+    try {
+        const prompt = `Genera una página web HTML completa y funcional con CSS incluido para: ${desc}
+
+REQUISITOS:
+- HTML5 + CSS en el mismo archivo
+- Diseño moderno, oscuro y profesional
+- Responsive para móvil
+- Comentarios en español
+- Código limpio y bien estructurado
+- Incluye colores DATESEG MX: rojo #c8102e, verde #006847
+
+Devuelve SOLO el código HTML, sin explicaciones ni backticks.`;
+        const reply = await askJULS(prompt);
+        result.textContent = reply;
+        result.classList.add('active');
+        btn.style.display = 'block';
+    } catch(e) {
+        result.textContent = '❌ Error: ' + e.message;
+    }
+}
+
+function copyCode() {
+    const code = document.getElementById('webgenResult').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+        document.getElementById('btnCopy').textContent = '✅ ¡Copiado!';
+        setTimeout(() => document.getElementById('btnCopy').textContent = '📋 Copiar código', 2000);
+    });
+}
+
+// ─── ANTI-FRAUDE ─────────────────────────────────────
+async function analyzefraud() {
+    const phone  = document.getElementById('fraudPhone').value.trim();
+    const text   = document.getElementById('fraudText').value.trim();
+    const result = document.getElementById('fraudResult');
+    if (!phone && !text) return;
+
+    result.className = 'fraud-result active fraud-warn';
+    result.textContent = '⏳ Analizando...';
+
+    try {
+        const prompt = `Analiza si esto es un posible fraude o estafa telefónica en México:
+Número: ${phone || 'No proporcionado'}
+Mensaje/conversación: ${text || 'Solo número'}
+
+Responde en este formato:
+VEREDICTO: [SEGURO / SOSPECHOSO / PELIGROSO]
+RIESGO: [porcentaje estimado]
+RAZONES: [lista breve de razones]
+RECOMENDACIÓN: [qué hacer]
+
+Sé directo y conciso.`;
+
+        const reply = await askJULS(prompt);
+        const upper = reply.toUpperCase();
+        if (upper.includes('PELIGROSO') || upper.includes('FRAUDE')) {
+            result.className = 'fraud-result active fraud-danger';
+        } else if (upper.includes('SOSPECHOSO')) {
+            result.className = 'fraud-result active fraud-warn';
+        } else {
+            result.className = 'fraud-result active fraud-safe';
+        }
+        result.textContent = reply;
+
+        // Guardar historial
+        fraudHistory.unshift({ phone: phone||'N/A', fecha: new Date().toLocaleString('es-MX'), veredicto: upper.includes('PELIGROSO') ? '🔴 Peligroso' : upper.includes('SOSPECHOSO') ? '🟡 Sospechoso' : '🟢 Seguro' });
+        if (fraudHistory.length > 10) fraudHistory = fraudHistory.slice(0,10);
+        localStorage.setItem('juls_fraud_history', JSON.stringify(fraudHistory));
+        showFraudHistory();
+    } catch(e) {
+        result.className = 'fraud-result active fraud-warn';
+        result.textContent = '❌ Error: ' + e.message;
+    }
+}
+
+function showFraudHistory() {
+    if (fraudHistory.length === 0) return;
+    document.getElementById('fraudHistCard').style.display = 'block';
+    document.getElementById('fraudHistory').innerHTML = fraudHistory.map(f => `
+        <div class="fraud-hist-item">
+            <span>${f.phone}</span>
+            <span>${f.veredicto}</span>
+        </div>
+    `).join('');
+}
+</script>
+</body>
+</html>
