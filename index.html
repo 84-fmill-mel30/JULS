@@ -332,7 +332,7 @@ async function callClaude(userMsg, ctx = []) {
             'anthropic-dangerous-direct-browser-access': 'true'
         },
         body: JSON.stringify({
-            model: 'claude-3-5-sonnet-20241022',
+            model: 'claude-opus-4-1',
             max_tokens: 512,
             system: SYSTEM,
             messages: msgs
@@ -349,18 +349,22 @@ async function callClaude(userMsg, ctx = []) {
 // ════════════════════════════════════════════════════════════════
 function speak(txt, onEnd) {
     if (!window.speechSynthesis) { onEnd?.(); return; }
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(txt.replace(/[*_#`]/g, '').substring(0, 280));
-    u.lang = 'es-MX';
-    u.rate = 1.0;
-    u.pitch = 1.1;
-    
-    const voices = window.speechSynthesis.getVoices();
-    const voz = voices.find(v => v.lang.startsWith('es') && v.name.toLowerCase().includes('female'))
-             || voices.find(v => v.lang.startsWith('es')) || null;
-    if (voz) u.voice = voz;
-    if (onEnd) u.onend = onEnd;
-    window.speechSynthesis.speak(u);
+    try {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(txt.replace(/[*_#`]/g, '').substring(0, 280));
+        u.lang = 'es-MX';
+        u.rate = 1.0;
+        u.pitch = 1.1;
+        
+        const voices = window.speechSynthesis.getVoices();
+        const voz = voices.find(v => v.lang.startsWith('es') && v.name.toLowerCase().includes('female'))
+                 || voices.find(v => v.lang.startsWith('es')) || null;
+        if (voz) u.voice = voz;
+        if (onEnd) u.onend = onEnd;
+        window.speechSynthesis.speak(u);
+    } catch (e) {
+        onEnd?.();
+    }
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -788,27 +792,38 @@ function loadTutorLevel() {
 }
 
 function speakTutorExample() {
+    if (!window.speechSynthesis) {
+        alert('Tu navegador no soporta síntesis de voz. Usa Chrome.');
+        return;
+    }
+    
     const lesson = LESSONS[currentTutorLevel];
     tutorIsSpeaking = true;
     document.getElementById('btnPracticeTutor').disabled = true;
     
-    const u = new SpeechSynthesisUtterance(lesson.example);
-    u.lang = 'en-US';
-    u.rate = 0.9;
-    u.pitch = 1.0;
-    
-    const voices = window.speechSynthesis.getVoices();
-    const voz = voices.find(v => v.lang.startsWith('en')) || null;
-    if (voz) u.voice = voz;
-    
-    u.onend = () => {
+    try {
+        const u = new SpeechSynthesisUtterance(lesson.example);
+        u.lang = 'en-US';
+        u.rate = 0.9;
+        u.pitch = 1.0;
+        
+        const voices = window.speechSynthesis.getVoices();
+        const voz = voices.find(v => v.lang.startsWith('en')) || null;
+        if (voz) u.voice = voz;
+        
+        u.onend = () => {
+            tutorIsSpeaking = false;
+            document.getElementById('btnPracticeTutor').disabled = false;
+            document.getElementById('tutorProgress').textContent = '✅ Escuchaste. Ahora presiona "Practicar" para intentar.';
+        };
+        
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(u);
+    } catch (e) {
         tutorIsSpeaking = false;
         document.getElementById('btnPracticeTutor').disabled = false;
-        document.getElementById('tutorProgress').textContent = '✅ Escuchaste. Ahora presiona "Practicar" para intentar.';
-    };
-    
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(u);
+        document.getElementById('tutorProgress').textContent = '❌ Error: ' + e.message;
+    }
 }
 
 function practiceTutorSpeech() {
