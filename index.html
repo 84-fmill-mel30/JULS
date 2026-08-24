@@ -319,21 +319,15 @@ function switchTab(name, el) {
 //  API CALL CON FALLBACK ROBUSTO
 // ════════════════════════════════════════════════════════════════
 
-const MODELS = [
-    'claude-opus-4-1-20250805',
-    'claude-3-5-sonnet-20241022',
-    'claude-opus-4-1-20250118',
-    'claude-3-opus-20250219',
-    'claude-3-5-haiku-20241022'
-];
-
+const MODELS = ['claude-opus-4-1-20250805'];
 let currentModel = MODELS[0];
-let modelErrors = {};
 
-async function callClaude(userMsg, ctx = []) {
-    const apiKey = localStorage.getItem('juls_api_key');
-    if (!apiKey) throw new Error('API Key no configurada');
-    
+async function callClaude(userMsg, ctx = [])
+const apiKey = prompt('Ingresa tu API key de Anthropic:');
+if (!apiKey) throw new Error('sk-ant-api03');
+localStorage.setItem('juls_', apiKey); // Guarda para no pedir de nuevo:');
+if (!apiKey) throw new Error('API Key requerida');
+localStorage.setItem('juls_', apiKey); // Guarda para no pedir de nuevo
     const msgs = [...ctx, { role: 'user', content: userMsg }];
     
     // Si el modelo actual ha fallado 3 veces, salta al siguiente
