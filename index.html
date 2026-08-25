@@ -3,271 +3,225 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>JULS — DATESEG MX</title>
+<title>👑 JULS — DATESEG MX</title>
 <style>
-:root{
-    --bg:#0b0f1e;--bg2:#131929;--bg3:#1a2240;
-    --orange:#ff6b00;--purple:#9b59f7;
-    --txt:#e0eaff;--txtD:#7890b8;--bdr:#1e3058;
-    --green:#059669;--red:#e63946;
-}
+:root{--bg:#0a0d18;--bg2:#0f1420;--bg3:#151d2e;--orange:#ff9500;--purple:#9b59f7;--cyan:#00d9ff;--txt:#f0f5ff;--txtD:#7890b8;--bdr:#1e3058;--green:#00ff88;--red:#ff3366;}
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{height:100%;background:var(--bg);color:var(--txt);font-family:Arial,sans-serif;overflow:hidden;}
-.app{display:flex;flex-direction:column;height:100vh;}
-
-/* HEADER */
-.header{background:var(--bg2);border-bottom:1px solid var(--bdr);padding:12px 16px;display:flex;align-items:center;gap:12px;}
-.juls-logo{width:44px;height:44px;border-radius:12px;background:#0d1530;display:flex;align-items:center;justify-content:center;font-size:26px;border:2px solid var(--orange);}
+html,body{height:100%;background:var(--bg);color:var(--txt);font-family:'Segoe UI',Arial,sans-serif;}
+.app{display:flex;flex-direction:column;height:100vh;background:linear-gradient(135deg,#0a0d18 0%,#0f1420 100%);}
+.header{background:linear-gradient(135deg,#0f1420,#151d2e);border-bottom:2px solid var(--orange);padding:14px 16px;display:flex;align-items:center;gap:14px;box-shadow:0 4px 20px rgba(255,149,0,0.15);}
+.logo-svg{width:56px;height:56px;min-width:56px;}
 .header-info{flex:1;}
-.header-name{font-size:18px;font-weight:800;color:var(--orange);}
-.header-sub{font-size:11px;color:var(--txtD);}
-.status-dot{width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 6px var(--red);cursor:pointer;transition:all .3s;}
-.status-dot.active{background:var(--green);box-shadow:0 0 6px var(--green);}
-
-/* TABS */
-.tabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--bdr);}
-.tab{flex:1;padding:11px 4px;border:none;background:transparent;color:var(--txtD);cursor:pointer;font-size:10px;font-weight:700;text-transform:uppercase;border-bottom:2px solid transparent;transition:all .2s;}
-.tab.active{color:var(--orange);border-bottom-color:var(--orange);}
-
+.header-name{font-size:22px;font-weight:900;background:linear-gradient(135deg,var(--orange),#ff8800);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:1px;}
+.header-sub{font-size:11px;color:var(--txtD);letter-spacing:0.5px;}
+.status-btn{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--red),#ff5588);border:2px solid var(--orange);cursor:pointer;box-shadow:0 0 15px rgba(255,51,102,0.4);transition:all .3s;font-size:22px;display:flex;align-items:center;justify-content:center;}
+.status-btn:hover{transform:scale(1.05);box-shadow:0 0 25px rgba(255,51,102,0.6);}
+.status-btn.active{background:linear-gradient(135deg,var(--green),#00ff88);box-shadow:0 0 15px rgba(0,255,136,0.4);}
+.tabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--bdr);overflow-x:auto;padding:0 4px;}
+.tab{flex:0 0 auto;padding:12px 14px;border:none;background:transparent;color:var(--txtD);cursor:pointer;font-size:11px;font-weight:700;text-transform:uppercase;border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap;letter-spacing:0.5px;}
+.tab:hover{color:var(--orange);}
+.tab.active{color:var(--orange);border-bottom-color:var(--orange);background:rgba(255,149,0,0.05);}
 .content{flex:1;overflow:hidden;display:flex;flex-direction:column;}
 .panel{display:none;flex:1;flex-direction:column;overflow:hidden;}
 .panel.active{display:flex;}
-
-/* ── CHAT ── */
-.messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;}
-.msg{max-width:85%;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.5;}
-.msg.user{align-self:flex-end;background:linear-gradient(135deg,#1a2f5e,#1e3a7a);border:1px solid #2a4a9a;}
-.msg.bot{align-self:flex-start;background:var(--bg3);border:1px solid var(--bdr);}
-.msg.bot .bot-name{font-size:10px;color:var(--orange);font-weight:800;margin-bottom:4px;}
-.typing span{width:6px;height:6px;background:var(--orange);border-radius:50%;display:inline-block;margin:0 2px;animation:bounce 1s infinite;}
-.typing span:nth-child(2){animation-delay:.15s;}
-.typing span:nth-child(3){animation-delay:.3s;}
-@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
-.input-bar{background:var(--bg2);border-top:1px solid var(--bdr);padding:10px 12px;display:flex;gap:8px;align-items:center;}
-.chat-in{flex:1;padding:10px 14px;background:var(--bg3);border:1px solid var(--bdr);border-radius:20px;color:var(--txt);font-size:13px;font-family:inherit;}
-.chat-in:focus{outline:none;border-color:var(--orange);}
-.btn-mic{width:40px;height:40px;border-radius:50%;border:none;background:var(--bg3);color:var(--txtD);font-size:18px;cursor:pointer;transition:all .2s;}
-.btn-mic.on{background:rgba(230,57,70,.2);color:var(--red);animation:mic-pulse 1s infinite;}
-@keyframes mic-pulse{50%{box-shadow:0 0 0 6px rgba(230,57,70,.15)}}
-.btn-send{width:40px;height:40px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--orange),#ff9500);color:#fff;font-size:18px;cursor:pointer;}
-
-/* ── VOZ ── */
-.voice-screen{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:30px 20px;text-align:center;overflow:hidden;}
-.orb{width:150px;height:150px;border-radius:50%;border:3px solid var(--orange);background:radial-gradient(circle at 40% 35%,#1e2f5e,#0b0f1e);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;box-shadow:0 0 30px rgba(255,107,0,.2);}
-.orb:active{transform:scale(0.95);}
-.orb.listen{border-color:var(--red);box-shadow:0 0 0 16px rgba(230,57,70,.1),0 0 0 32px rgba(230,57,70,.05);animation:orb-p 1.2s infinite;}
-.orb.think{border-color:var(--purple);box-shadow:0 0 30px rgba(155,89,247,.3);}
-.orb.speak{border-color:var(--green);box-shadow:0 0 0 16px rgba(5,150,105,.1);animation:orb-p .8s infinite;}
-@keyframes orb-p{50%{transform:scale(1.06)}}
-.orb-icon{font-size:60px;}
-.orb-status{font-size:16px;font-weight:700;color:var(--txtD);}
-.orb-status.listen{color:var(--red);}
-.orb-status.think{color:var(--purple);}
-.orb-status.speak{color:var(--green);}
-.orb-trans{font-size:12px;color:var(--txtD);font-style:italic;min-height:30px;max-width:280px;line-height:1.5;}
-.orb-bubble{background:var(--bg2);border:1px solid var(--bdr);border-radius:14px;padding:14px;font-size:13px;line-height:1.5;max-width:300px;display:none;}
-.orb-bubble.show{display:block;}
-.orb-bubble-name{font-size:10px;color:var(--orange);font-weight:800;margin-bottom:4px;}
-.orb-hint{font-size:11px;color:#3a5080;}
-.orb-history{width:100%;max-height:100px;overflow-y:auto;display:flex;flex-direction:column;gap:5px;}
-.orb-hist-item{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:8px 10px;font-size:11px;text-align:left;}
-.orb-hist-user{color:var(--txtD);}
-.orb-hist-juls{color:var(--txt);}
-
-/* ── TRADUCTOR ── */
-.trans-wrap{flex:1;padding:14px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;}
-.lang-row{display:flex;align-items:center;gap:10px;}
-.lang-lbl{flex:1;text-align:center;padding:8px;background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;font-size:12px;font-weight:700;color:var(--orange);}
-.swap-btn{font-size:22px;cursor:pointer;}
-textarea{background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-size:13px;padding:12px;resize:none;font-family:inherit;width:100%;}
-textarea:focus{outline:none;border-color:var(--orange);}
-.btn-action{padding:13px;border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:800;cursor:pointer;width:100%;}
-.btn-trans{background:linear-gradient(135deg,var(--orange),#ff9500);}
-.btn-gen{background:linear-gradient(135deg,var(--purple),#7b2ff7);}
-.result-box{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:14px;font-size:13px;line-height:1.5;min-height:50px;}
-
-/* ── WEB GEN ── */
-.gen-wrap{flex:1;padding:14px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;}
-.code-box{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:14px;font-size:11px;font-family:monospace;line-height:1.5;overflow-x:auto;white-space:pre-wrap;display:none;max-height:280px;overflow-y:auto;}
-.code-box.show{display:block;}
-.btn-copy{padding:10px;background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-size:12px;cursor:pointer;display:none;width:100%;}
-.btn-copy.show{display:block;}
-
-/* ── ANTI-FRAUDE ── */
-.fraud-wrap{flex:1;padding:14px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;}
-.card{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:14px;}
-.card-title{font-size:13px;font-weight:800;color:var(--orange);margin-bottom:12px;}
-.fraud-in{padding:10px 12px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg3);color:var(--txt);font-size:14px;width:100%;margin-bottom:10px;font-family:inherit;}
-.btn-fraud{background:linear-gradient(135deg,var(--red),#ff4d6a);padding:13px;border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:800;cursor:pointer;width:100%;}
-.fraud-res{border-radius:8px;padding:14px;font-size:12px;line-height:1.6;margin-top:10px;display:none;}
-.fraud-res.show{display:block;}
-.f-safe{background:rgba(5,150,105,.1);border:1px solid rgba(5,150,105,.3);color:#34d399;}
-.f-warn{background:rgba(255,107,0,.1);border:1px solid rgba(255,107,0,.3);color:#ff9500;}
-.f-danger{background:rgba(230,57,70,.1);border:1px solid rgba(230,57,70,.3);color:#ff6b7a;}
-.hist-item{background:var(--bg3);border-radius:6px;padding:8px 12px;font-size:11px;margin-bottom:6px;display:flex;justify-content:space-between;}
-
-/* ── MODAL ── */
-.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;align-items:center;justify-content:center;padding:20px;}
-.modal.show{display:flex;}
-.modal-content{background:var(--bg2);border:1px solid var(--bdr);border-radius:16px;padding:24px;width:100%;max-width:380px;}
-.modal-title{font-size:18px;font-weight:800;color:var(--orange);margin-bottom:12px;}
-.modal-desc{font-size:12px;color:var(--txtD);margin-bottom:16px;line-height:1.5;}
-.modal input{width:100%;padding:12px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg3);color:var(--txt);font-size:13px;margin-bottom:12px;font-family:monospace;}
-.modal-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--orange),#ff9500);border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:800;cursor:pointer;margin-bottom:8px;}
-.modal-note{font-size:11px;color:#3a5080;text-align:center;}
+.messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;}
+.msg{max-width:85%;padding:12px 16px;border-radius:14px;font-size:13px;line-height:1.6;word-wrap:break-word;}
+.msg.user{align-self:flex-end;background:linear-gradient(135deg,#1a2f5e,#2a4a9a);border:1px solid #3a5aaa;}
+.msg.bot{align-self:flex-start;background:linear-gradient(135deg,var(--bg3),#1a2f5e);border:1px solid var(--bdr);}
+.msg.bot .bot-name{font-size:11px;color:var(--orange);font-weight:900;margin-bottom:6px;letter-spacing:0.5px;}
+.input-bar{background:var(--bg2);border-top:1px solid var(--bdr);padding:12px 14px;display:flex;gap:10px;align-items:center;}
+.chat-in{flex:1;padding:12px 16px;background:linear-gradient(135deg,var(--bg3),#1a2f5e);border:1px solid var(--bdr);border-radius:24px;color:var(--txt);font-size:13px;font-family:inherit;transition:all .2s;}
+.chat-in:focus{outline:none;border-color:var(--orange);box-shadow:0 0 12px rgba(255,149,0,0.2);}
+.btn-send{width:44px;height:44px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--orange),#ff8800);color:#fff;font-size:18px;cursor:pointer;box-shadow:0 4px 12px rgba(255,149,0,0.3);transition:all .2s;}
+.btn-send:hover{transform:scale(1.05);box-shadow:0 6px 20px rgba(255,149,0,0.4);}
+.btn-send:active{transform:scale(0.95);}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-overlay.show{display:flex !important;}
+.modal-box{background:linear-gradient(135deg,#0f1420,#151d2e);border:2px solid var(--orange);border-radius:18px;padding:28px;width:90%;max-width:400px;box-shadow:0 0 40px rgba(255,149,0,0.4);}
+.modal-title{font-size:22px;font-weight:900;background:linear-gradient(135deg,var(--orange),#ff8800);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:16px;}
+.modal-text{font-size:13px;color:var(--txtD);margin-bottom:18px;line-height:1.7;}
+.modal-text a{color:var(--orange);text-decoration:underline;font-weight:700;}
+.modal input{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--orange);background:var(--bg3);color:var(--txt);font-size:13px;margin-bottom:18px;font-family:monospace;}
+.modal input:focus{outline:none;border-color:#ff8800;box-shadow:0 0 12px rgba(255,149,0,0.3);}
+.modal-buttons{display:flex;gap:12px;}
+.modal-btn{flex:1;padding:14px;background:linear-gradient(135deg,var(--orange),#ff8800);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:800;cursor:pointer;transition:all .2s;}
+.modal-btn:hover{opacity:0.9;transform:translateY(-2px);box-shadow:0 6px 20px rgba(255,149,0,0.3);}
+.modal-btn-cancel{background:var(--bg3);border:1px solid var(--bdr);color:var(--txt);}
+.modal-btn-cancel:hover{border-color:var(--orange);box-shadow:0 0 12px rgba(255,149,0,0.1);}
+::-webkit-scrollbar{width:8px;}
+::-webkit-scrollbar-track{background:var(--bg3);}
+::-webkit-scrollbar-thumb{background:linear-gradient(135deg,var(--orange),#ff8800);border-radius:4px;}
+.control-section{padding:16px;background:var(--bg3);margin:8px 16px;border-radius:12px;border:1px solid var(--bdr);}
+.control-label{font-size:12px;color:var(--orange);font-weight:800;margin-bottom:8px;}
+.control-group{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+select{padding:8px 12px;background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-size:12px;cursor:pointer;}
+button{background:linear-gradient(135deg,var(--orange),#ff8800);border:none;padding:10px 16px;border-radius:8px;color:#fff;font-size:12px;font-weight:800;cursor:pointer;transition:all .2s;}
+button:hover{opacity:0.9;transform:translateY(-1px);}
+.translate-result{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:12px;margin-top:12px;color:var(--cyan);font-size:12px;min-height:40px;}
+.orb{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,#1a2f5e,#2a4a9a);border:2px solid var(--orange);margin:20px auto;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:48px;transition:all .3s;}
+.orb:hover{transform:scale(1.05);box-shadow:0 0 20px rgba(255,149,0,0.3);}
+.orb.recording{background:linear-gradient(135deg,var(--red),#ff5588);box-shadow:0 0 30px rgba(255,51,102,0.5);}
 </style>
 </head>
 <body>
+
 <div class="app">
+    <!-- HEADER -->
     <div class="header">
-        <div class="juls-logo">👑</div>
+        <svg class="logo-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <filter id="glow"><feGaussianBlur stdDeviation="3" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                <radialGradient id="bgGradient"><stop offset="0%" style="stop-color:#1a2f5e"/><stop offset="100%" style="stop-color:#0a0d18"/></radialGradient>
+                <linearGradient id="jGradient" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#fff"/><stop offset="100%" style="stop-color:#00d9ff"/></linearGradient>
+            </defs>
+            <rect width="200" height="200" rx="40" fill="url(#bgGradient)"/>
+            <g filter="url(#glow)"><ellipse cx="60" cy="60" rx="18" ry="22" fill="#ff9500"/><circle cx="55" cy="50" r="6" fill="#ffb84d"/></g>
+            <g filter="url(#glow)"><polygon points="100,40 95,65 105,65" fill="#ff9500"/><circle cx="100" cy="38" r="7" fill="#ffb84d"/></g>
+            <g filter="url(#glow)"><ellipse cx="140" cy="60" rx="18" ry="22" fill="#ff9500"/><circle cx="145" cy="50" r="6" fill="#ffb84d"/></g>
+            <rect x="45" y="75" width="110" height="22" rx="11" fill="#ff9500" filter="url(#glow)"/>
+            <circle cx="50" cy="86" r="8" fill="#ffb84d"/><circle cx="150" cy="86" r="8" fill="#ffb84d"/>
+            <g filter="url(#glow)"><rect x="88" y="85" width="24" height="80" rx="12" fill="url(#jGradient)"/><path d="M 88 165 Q 60 165 60 140" stroke="url(#jGradient)" stroke-width="24" fill="none" stroke-linecap="round"/><rect x="75" y="80" width="50" height="16" rx="8" fill="url(#jGradient)"/></g>
+            <g fill="#9b59f7" opacity="0.8" filter="url(#glow)"><polygon points="35,50 40,55 35,60 30,55"/><polygon points="165,50 170,55 165,60 160,55"/><polygon points="30,150 35,155 30,160 25,155"/><polygon points="170,150 175,155 170,160 165,155"/><polygon points="25,100 30,105 25,110 20,105"/><polygon points="175,100 180,105 175,110 170,105"/></g>
+            <g fill="#ff6b00" opacity="0.7" filter="url(#glow)"><circle cx="45" cy="45" r="3"/><circle cx="155" cy="45" r="3"/><circle cx="40" cy="130" r="3"/><circle cx="160" cy="130" r="3"/><circle cx="50" cy="100" r="2.5"/><circle cx="150" cy="100" r="2.5"/></g>
+        </svg>
         <div class="header-info">
             <div class="header-name">JULS</div>
             <div class="header-sub">DATESEG MX • Para mi hija Juls 💜</div>
         </div>
-        <div class="status-dot" id="statusDot" title="Configurar API Key" onclick="showApiModal()"></div>
+        <button class="status-btn" id="statusBtn" onclick="openApiModal()" title="Configurar API Key">🔑</button>
     </div>
 
+    <!-- TABS -->
     <div class="tabs">
-        <button class="tab active" onclick="switchTab('chat',this)">💬 Chat</button>
-        <button class="tab" onclick="switchTab('voice',this)">🎤 Voz</button>
-        <button class="tab" onclick="switchTab('tutor',this)">🏫 Tutor</button>
-        <button class="tab" onclick="switchTab('trans',this)">🌐 Trans</button>
-        <button class="tab" onclick="switchTab('gen',this)">🔨 Web</button>
-        <button class="tab" onclick="switchTab('fraud',this)">🚨 Fraude</button>
+        <button class="tab active" onclick="switchTab('chat', this)">💬 Chat</button>
+        <button class="tab" onclick="switchTab('voice', this)">🎤 Voz</button>
+        <button class="tab" onclick="switchTab('tutor', this)">🏫 English</button>
+        <button class="tab" onclick="switchTab('trans', this)">🌐 Traductor</button>
+        <button class="tab" onclick="switchTab('web', this)">🕸️ Web Gen</button>
+        <button class="tab" onclick="switchTab('fraud', this)">🛡️ Anti-Fraude</button>
     </div>
 
+    <!-- CONTENT -->
     <div class="content">
         <!-- CHAT -->
         <div class="panel active" id="chatPanel">
             <div class="messages" id="msgs">
                 <div class="msg bot">
                     <div class="bot-name">👑 JULS</div>
-                    ¡Hola! Soy JULS, tu asistente de DATESEG MX 💜 ¿En qué te ayudo?
+                    ¡Hola! Soy JULS, tu asistente de DATESEG MX 💜<br>Estoy aquí para ayudarte en tecnología automotriz, seguridad y análisis.<br>¿En qué te puedo ayudar?
                 </div>
             </div>
             <div class="input-bar">
-                <button class="btn-mic" id="btnMic" onclick="toggleMicChat()">🎤</button>
-                <input class="chat-in" id="chatIn" placeholder="Escríbele a JULS..." onkeydown="if(event.key==='Enter')sendChat()">
+                <button class="btn-send" id="chatMicBtn" onclick="chatMic()" style="background:linear-gradient(135deg,var(--purple),#7b3ff0);">🎤</button>
+                <input class="chat-in" id="chatIn" placeholder="Cuéntame algo..." onkeydown="if(event.key==='Enter')sendChat()">
                 <button class="btn-send" onclick="sendChat()">➤</button>
             </div>
         </div>
 
         <!-- VOZ -->
         <div class="panel" id="voicePanel">
-            <div class="voice-screen">
-                <div class="orb" id="orb" onclick="toggleOrb()">
-                    <div class="orb-icon" id="orbIcon">👑</div>
+            <div style="flex:1;overflow-y:auto;padding:16px;">
+                <div class="control-section">
+                    <div class="control-label">🎤 MICRÓFONO</div>
+                    <div class="orb" id="voiceOrb" onclick="toggleVoice()">
+                        <span id="voiceIcon">🎤</span>
+                    </div>
+                    <div style="text-align:center;color:var(--txtD);font-size:12px;margin-top:12px;" id="voiceStatus">Toca para hablar</div>
+                    <div class="translate-result" id="voiceResult"></div>
                 </div>
-                <div class="orb-status" id="orbStatus">Toca para hablar</div>
-                <div class="orb-trans" id="orbTrans"></div>
-                <div class="orb-bubble" id="orbBubble">
-                    <div class="orb-bubble-name">👑 JULS dice:</div>
-                    <div id="orbBubbleTxt"></div>
-                </div>
-                <div class="orb-hint">Habla en español • JULS te responde con voz</div>
-                <div class="orb-history" id="orbHistory"></div>
             </div>
         </div>
 
-        <!-- TUTOR DE INGLÉS -->
+        <!-- ENGLISH TUTOR -->
         <div class="panel" id="tutorPanel">
-            <div class="trans-wrap">
-                <div class="card">
-                    <div class="card-title">🏫 English Tutor — Aprende inglés interactivo</div>
-                    <div style="font-size:12px;color:#7890b8;margin-bottom:16px;">Tu maestro personal de inglés. Hablamos juntos y me corriges.</div>
-                    
-                    <div style="display:flex;gap:10px;margin-bottom:12px;">
-                        <select id="tutorLevel" style="flex:1;padding:10px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg3);color:var(--txt);font-size:12px;" onchange="loadTutorLevel()">
-                            <option value="basics">🔤 Básico: Alfabeto</option>
-                            <option value="numbers">🔢 Números (0-10)</option>
-                            <option value="greetings">👋 Saludos básicos</option>
-                            <option value="verbs">📝 Conjugación: Presente</option>
-                            <option value="phrases">💬 Frases comunes</option>
-                        </select>
-                    </div>
-
-                    <div id="tutorContent" style="background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;padding:14px;margin-bottom:12px;min-height:80px;"></div>
-
-                    <div style="display:flex;gap:8px;margin-bottom:12px;">
-                        <button class="btn-action" style="background:linear-gradient(135deg,#059669,#10b981);flex:1;" onclick="speakTutorExample()">🔊 Escuchar</button>
-                        <button class="btn-action" style="background:linear-gradient(135deg,var(--orange),#ff9500);flex:1;" id="btnPracticeTutor" onclick="practiceTutorSpeech()">🎤 Practicar</button>
-                    </div>
-
-                    <div id="tutorFeedback" style="background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:12px;font-size:12px;line-height:1.5;min-height:40px;display:none;"></div>
-
-                    <div id="tutorProgress" style="font-size:11px;color:#3a5080;margin-top:12px;text-align:center;"></div>
+            <div class="control-section" style="margin:8px 16px 0;">
+                <div class="control-label">🏫 TUTOR DE IDIOMAS — Plática con traducción y corrección</div>
+                <div class="control-group">
+                    <select id="tutorLang" onchange="resetTutor()">
+                        <option value="English|en|en-US|🇺🇸">🇺🇸 Inglés</option>
+                        <option value="French|fr|fr-FR|🇫🇷">🇫🇷 Francés</option>
+                        <option value="Italian|it|it-IT|🇮🇹">🇮🇹 Italiano</option>
+                        <option value="Portuguese|pt|pt-BR|🇧🇷">🇧🇷 Portugués</option>
+                        <option value="German|de|de-DE|🇩🇪">🇩🇪 Alemán</option>
+                        <option value="Japanese|ja|ja-JP|🇯🇵">🇯🇵 Japonés</option>
+                        <option value="Chinese|zh|zh-CN|🇨🇳">🇨🇳 Chino</option>
+                    </select>
+                    <select id="tutorLevel" onchange="resetTutor()">
+                        <option value="beginner">🔤 Principiante</option>
+                        <option value="intermediate">📗 Intermedio</option>
+                        <option value="advanced">🎓 Avanzado</option>
+                    </select>
+                    <select id="tutorTopic" onchange="resetTutor()">
+                        <option value="daily life">☕ Vida diaria</option>
+                        <option value="work and business">💼 Trabajo</option>
+                        <option value="cars and mechanics">🚗 Autos</option>
+                        <option value="travel">✈️ Viajes</option>
+                        <option value="free conversation">💬 Libre</option>
+                    </select>
+                    <button onclick="resetTutor()">🔄 Reiniciar</button>
                 </div>
+            </div>
+            <div class="messages" id="tutorMsgs">
+                <div class="msg bot">
+                    <div class="bot-name">🏫 PROFE JULS</div>
+                    ¡Hola! Soy tu profe de idiomas. Elige idioma, nivel y tema, y empieza a hablar.<br><br>
+                    <span style="color:var(--txtD);font-size:12px;">Puedes escribir en español o en el idioma que estudias — yo te traduzco todo en ambos sentidos y te corrijo.</span>
+                </div>
+            </div>
+            <div class="input-bar">
+                <button class="btn-send" id="tutorMicBtn" onclick="tutorMic()" style="background:linear-gradient(135deg,var(--purple),#7b3ff0);">🎤</button>
+                <input class="chat-in" id="tutorIn" placeholder="Escribe aquí..." onkeydown="if(event.key==='Enter')sendTutor()">
+                <button class="btn-send" onclick="sendTutor()">➤</button>
             </div>
         </div>
 
         <!-- TRADUCTOR -->
         <div class="panel" id="transPanel">
-            <div class="trans-wrap">
-                <div style="display:flex;gap:8px;margin-bottom:12px;">
-                    <select id="langFromSelect" style="flex:1;padding:10px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg3);color:var(--txt);font-size:12px;" onchange="updateLangLabels()">
-                        <option value="es">🇲🇽 Español</option>
-                        <option value="en">🇺🇸 Inglés</option>
-                        <option value="pt">🇧🇷 Portugués</option>
-                        <option value="it">🇮🇹 Italiano</option>
-                        <option value="fr">🇫🇷 Francés</option>
-                        <option value="de">🇩🇪 Alemán</option>
-                        <option value="ja">🇯🇵 Japonés</option>
-                        <option value="zh">🇨🇳 Chino</option>
-                        <option value="ko">🇰🇷 Coreano</option>
-                        <option value="ar">🇸🇦 Árabe</option>
-                        <option value="ru">🇷🇺 Ruso</option>
-                        <option value="nl">🇳🇱 Holandés</option>
-                        <option value="sv">🇸🇪 Sueco</option>
-                        <option value="pl">🇵🇱 Polaco</option>
-                    </select>
-                    <button style="padding:10px 12px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg3);color:var(--txt);font-size:16px;cursor:pointer;" onclick="swapLang()">⇄</button>
-                    <select id="langToSelect" style="flex:1;padding:10px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg3);color:var(--txt);font-size:12px;" onchange="updateLangLabels()">
-                        <option value="en">🇺🇸 Inglés</option>
-                        <option value="es">🇲🇽 Español</option>
-                        <option value="pt">🇧🇷 Portugués</option>
-                        <option value="it">🇮🇹 Italiano</option>
-                        <option value="fr">🇫🇷 Francés</option>
-                        <option value="de">🇩🇪 Alemán</option>
-                        <option value="ja">🇯🇵 Japonés</option>
-                        <option value="zh">🇨🇳 Chino</option>
-                        <option value="ko">🇰🇷 Coreano</option>
-                        <option value="ar">🇸🇦 Árabe</option>
-                        <option value="ru">🇷🇺 Ruso</option>
-                        <option value="nl">🇳🇱 Holandés</option>
-                        <option value="sv">🇸🇪 Sueco</option>
-                        <option value="pl">🇵🇱 Polaco</option>
-                    </select>
+            <div style="flex:1;overflow-y:auto;padding:16px;">
+                <div class="control-section">
+                    <div class="control-label">🌐 TRADUCTOR</div>
+                    <input type="text" id="transInput" placeholder="Escribe texto a traducir..." style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg2);color:var(--txt);margin-bottom:12px;">
+                    <div class="control-group">
+                        <select id="transLang">
+                            <option value="es">Español</option>
+                            <option value="en">English</option>
+                            <option value="fr">Français</option>
+                            <option value="de">Deutsch</option>
+                            <option value="it">Italiano</option>
+                            <option value="pt">Português</option>
+                            <option value="ru">Русский</option>
+                            <option value="zh">中文</option>
+                            <option value="ja">日本語</option>
+                            <option value="ko">한국어</option>
+                        </select>
+                        <button onclick="translateText()">Traducir</button>
+                    </div>
+                    <div class="translate-result" id="transResult"></div>
                 </div>
-                <textarea id="transIn" rows="4" placeholder="Escribe el texto a traducir..."></textarea>
-                <button class="btn-action btn-trans" onclick="translateText()">🌐 TRADUCIR</button>
-                <div class="result-box" id="transOut">El resultado aparecerá aquí...</div>
             </div>
         </div>
 
         <!-- WEB GEN -->
-        <div class="panel" id="genPanel">
-            <div class="gen-wrap">
-                <textarea id="genIn" rows="4" placeholder="Describe la página web que necesitas...&#10;Ej: Landing para taller mecánico con servicios y contacto"></textarea>
-                <button class="btn-action btn-gen" onclick="genWeb()">🔨 GENERAR PÁGINA WEB</button>
-                <div class="code-box" id="genOut"></div>
-                <button class="btn-copy" id="btnCopy" onclick="copyCode()">📋 Copiar código</button>
+        <div class="panel" id="webPanel">
+            <div style="flex:1;overflow-y:auto;padding:16px;">
+                <div class="control-section">
+                    <div class="control-label">🕸️ WEB GENERATOR</div>
+                    <input type="text" id="webPrompt" placeholder="Describe tu página web..." style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg2);color:var(--txt);margin-bottom:12px;">
+                    <button onclick="generateWeb()" style="width:100%;">Generar Código</button>
+                    <textarea id="webResult" readonly style="width:100%;height:200px;margin-top:12px;padding:10px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg2);color:var(--cyan);font-family:monospace;font-size:11px;"></textarea>
+                    <button onclick="copyWebCode()" style="width:100%;margin-top:8px;">📋 Copiar Código</button>
+                </div>
             </div>
         </div>
 
         <!-- ANTI-FRAUDE -->
         <div class="panel" id="fraudPanel">
-            <div class="fraud-wrap">
-                <div class="card">
-                    <div class="card-title">🚨 Detector Anti-Fraude</div>
-                    <input class="fraud-in" id="fraudPhone" type="tel" placeholder="Número: 5512345678">
-                    <textarea id="fraudMsg" rows="3" style="margin-bottom:10px" placeholder="Mensaje sospechoso (opcional)..."></textarea>
-                    <button class="btn-fraud" onclick="checkFraud()">🔍 ANALIZAR</button>
-                    <div class="fraud-res" id="fraudRes"></div>
-                </div>
-                <div class="card" id="histCard" style="display:none">
-                    <div class="card-title">📋 Historial</div>
-                    <div id="histList"></div>
+            <div style="flex:1;overflow-y:auto;padding:16px;">
+                <div class="control-section">
+                    <div class="control-label">🛡️ DETECTOR DE FRAUDE</div>
+                    <input type="text" id="fraudInput" placeholder="Analiza una transacción..." style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg2);color:var(--txt);margin-bottom:12px;">
+                    <button onclick="analyzeTransaction()" style="width:100%;">Analizar</button>
+                    <div class="translate-result" id="fraudResult"></div>
                 </div>
             </div>
         </div>
@@ -275,687 +229,406 @@ textarea:focus{outline:none;border-color:var(--orange);}
 </div>
 
 <!-- MODAL API KEY -->
-<div class="modal" id="apiModal">
-    <div class="modal-content">
-        <div class="modal-title">🔑 API Key de Anthropic</div>
-        <div class="modal-desc">
-            Para que JULS funcione necesitas tu API Key.<br>
-            Obtén la tuya en: <b style="color:#ff6b00">console.anthropic.com</b>
+<div class="modal-overlay" id="apiModal">
+    <div class="modal-box">
+        <div class="modal-title">🔑 Configurar API Key</div>
+        <div class="modal-text">Ingresa tu API key de Anthropic<br><a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a></div>
+        <input type="password" id="apiKeyInput" placeholder="sk-ant-..." autocomplete="off">
+        <div class="modal-buttons">
+            <button class="modal-btn modal-btn-cancel" onclick="closeApiModal()">Cancelar</button>
+            <button class="modal-btn" onclick="saveApiKey()">Guardar</button>
         </div>
-        <input id="apiKeyInput" type="password" placeholder="sk-ant-api03-...">
-        <button class="modal-btn" onclick="saveApiKey()">✅ GUARDAR Y ACTIVAR JULS</button>
-        <div class="modal-note">La key se guarda solo en tu dispositivo</div>
     </div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════
-//  JULS FINAL — Todo en uno
-//  DATESEG MX • Dedicada a Juls, hija de Fer Millán
-//  Versión 1.0 — Sin bugs, completamente funcional
-// ═══════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
+// CONFIGURACIÓN
+// ════════════════════════════════════════════════════════════════
 
-const SYSTEM = `Eres JULS, asistente inteligente mexicana creada por DATESEG MX. Tu nombre viene de Juls, hija de Fer Millán, tu creador. Eres experta en tecnología automotriz, Android, Firebase y OBD2. Hablas español mexicano natural, cálido y profesional. Apoyas a Fer con ProPart V8, OilMaster y sus proyectos. Cuando respondes por voz, sé MUY breve (máximo 2 oraciones). En chat puedes ser más detallada. Empresa: DATESEG MX — Alpuyeca, Morelos, México.`;
-
+const MODELS = ['claude-opus-4-6-20250514','claude-opus-4-6','claude-opus-4-1-20250119','claude-3-5-sonnet-20241022'];
+let currentModel = MODELS[0];
+let modelErrors = {};
 let chatHistory = [];
-let voiceHistory = [];
-let listening = false;
-let micChatActive = false;
-let fraudHist = JSON.parse(localStorage.getItem('juls_fraud_hist') || '[]');
-
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-// ════════════════════════════════════════════════════════════════
-//  TABS
-// ════════════════════════════════════════════════════════════════
-function switchTab(name, el) {
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.getElementById(name + 'Panel').classList.add('active');
-    el.classList.add('active');
-}
+const SYSTEM = `Eres JULS, asistente personal de DATESEG MX.
+Tu rol: ayudar con tecnología automotriz, seguridad familiar, análisis anti-fraude.
+Responde en español. Sé conciso y profesional.`;
 
 // ════════════════════════════════════════════════════════════════
-//  API CALL CON FALLBACK ROBUSTO
+// MODAL API KEY
 // ════════════════════════════════════════════════════════════════
 
-const MODELS = ['claude-opus-4-1-20250805'];
-let currentModel = MODELS[0];
+function openApiModal(){document.getElementById('apiModal').classList.add('show');setTimeout(()=>document.getElementById('apiKeyInput').focus(),100);}
+function closeApiModal(){document.getElementById('apiModal').classList.remove('show');}
+function saveApiKey(){const key=document.getElementById('apiKeyInput').value.trim();if(!key||!key.startsWith('sk-ant-')){alert('❌ API Key inválida');return;}localStorage.setItem('juls_api_key',key);document.getElementById('apiKeyInput').value='';closeApiModal();updateStatus();alert('✅ API Key guardada');}
+function updateStatus(){const hasKey=!!localStorage.getItem('juls_api_key');const btn=document.getElementById('statusBtn');if(hasKey){btn.classList.add('active');btn.textContent='✅';}else{btn.classList.remove('active');btn.textContent='🔑';}}
 
-async function callClaude(userMsg, ctx = [])
-const apiKey = prompt('Ingresa tu API key de Anthropic:');
-if (!apiKey) throw new Error('sk-ant-api03');
-localStorage.setItem('juls_', apiKey); // Guarda para no pedir de nuevo:');
-if (!apiKey) throw new Error('API Key requerida');
-localStorage.setItem('juls_', apiKey); // Guarda para no pedir de nuevo
-    const msgs = [...ctx, { role: 'user', content: userMsg }];
-    
-    // Si el modelo actual ha fallado 3 veces, salta al siguiente
-    if ((modelErrors[currentModel] || 0) >= 3) {
-        const nextIndex = MODELS.indexOf(currentModel) + 1;
-        if (nextIndex < MODELS.length) {
-            currentModel = MODELS[nextIndex];
-            modelErrors[currentModel] = 0;
-        }
-    }
-    
-    // Intentar con el modelo actual
-    try {
-        const res = await fetch('https://api.anthropic.com/v1/messages', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-api-key': apiKey,
-                'anthropic-version': '2023-06-01',
-                'anthropic-dangerous-direct-browser-access': 'true'
-            },
-            body: JSON.stringify({
-                model: currentModel,
-                max_tokens: 1024,
-                system: SYSTEM,
-                messages: msgs
-            })
+// ════════════════════════════════════════════════════════════════
+// CALL CLAUDE
+// ════════════════════════════════════════════════════════════════
+
+async function callClaude(userMsg,ctx=[]){
+    const apiKey=localStorage.getItem('juls_api_key');
+    if(!apiKey){openApiModal();throw new Error('API Key requerida');}
+    const msgs=[...ctx,{role:'user',content:userMsg}];
+    try{
+        const res=await fetch('https://api.anthropic.com/v1/messages',{
+            method:'POST',
+            headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+            body:JSON.stringify({model:currentModel,max_tokens:1024,system:SYSTEM,messages:msgs})
         });
-        
-        const data = await res.json();
-        
-        if (!res.ok) {
-            // Si falla, registra el error
-            modelErrors[currentModel] = (modelErrors[currentModel] || 0) + 1;
-            
-            // Si es error de modelo no disponible
-            if (data.error?.message?.includes('model_not_found') || 
-                data.error?.message?.includes('Invalid') ||
-                res.status === 404) {
-                
-                // Intenta el siguiente modelo
-                const nextIndex = MODELS.indexOf(currentModel) + 1;
-                if (nextIndex < MODELS.length) {
-                    currentModel = MODELS[nextIndex];
-                    return callClaude(userMsg, ctx); // Reintentar recursivamente
-                }
-            }
-            
-            throw new Error(data.error?.message || 'Error API - Intenta de nuevo');
+        const data=await res.json();
+        if(!res.ok){
+            modelErrors[currentModel]=(modelErrors[currentModel]||0)+1;
+            if(modelErrors[currentModel]>=3){const nextIdx=MODELS.indexOf(currentModel)+1;if(nextIdx<MODELS.length){currentModel=MODELS[nextIdx];return callClaude(userMsg,ctx);}}
+            throw new Error(data.error?.message||'Error API');
         }
-        
-        // Si funciona, resetea los errores
-        modelErrors[currentModel] = 0;
+        modelErrors[currentModel]=0;
         return data.content[0].text;
-    } catch (e) {
-        // Si es error de red o timeout, incrementa error counter
-        modelErrors[currentModel] = (modelErrors[currentModel] || 0) + 1;
-        
-        // Si ha fallado muchas veces, intenta otro modelo
-        if (modelErrors[currentModel] >= 3) {
-            const nextIndex = MODELS.indexOf(currentModel) + 1;
-            if (nextIndex < MODELS.length) {
-                currentModel = MODELS[nextIndex];
-                return callClaude(userMsg, ctx);
+    }catch(e){console.error(e);throw e;}
+}
+
+// ════════════════════════════════════════════════════════════════
+// CHAT
+// ════════════════════════════════════════════════════════════════
+
+async function sendChat(){
+    const input=document.getElementById('chatIn');const msg=input.value.trim();if(!msg)return;
+    const msgs=document.getElementById('msgs');
+    const userDiv=document.createElement('div');userDiv.className='msg user';userDiv.textContent=msg;msgs.appendChild(userDiv);msgs.scrollTop=msgs.scrollHeight;
+    input.value='';input.disabled=true;
+    try{
+        const response=await callClaude(msg,chatHistory);
+        chatHistory.push({role:'user',content:msg});chatHistory.push({role:'assistant',content:response});
+        const botDiv=document.createElement('div');botDiv.className='msg bot';botDiv.innerHTML=`<div class="bot-name">👑 JULS</div>${response}`;msgs.appendChild(botDiv);msgs.scrollTop=msgs.scrollHeight;
+        speakES(response);
+    }catch(e){
+        const errDiv=document.createElement('div');errDiv.className='msg bot';errDiv.innerHTML=`<div class="bot-name">❌ Error</div>${e.message}`;msgs.appendChild(errDiv);msgs.scrollTop=msgs.scrollHeight;
+    }finally{input.disabled=false;input.focus();}
+}
+
+function chatMic(){
+    const btn=document.getElementById('chatMicBtn');
+    startMic('es-MX',
+        (text)=>{document.getElementById('chatIn').value=text;sendChat();},
+        ()=>{btn.textContent='🔴';},
+        ()=>{btn.textContent='🎤';}
+    );
+}
+
+// ════════════════════════════════════════════════════════════════
+// VOZ
+// ════════════════════════════════════════════════════════════════
+
+let voiceRec=null;
+let isRecording=false;
+
+function toggleVoice(){
+    const orb=document.getElementById('voiceOrb');
+    const status=document.getElementById('voiceStatus');
+    const result=document.getElementById('voiceResult');
+
+    if(isRecording){
+        try{voiceRec&&voiceRec.stop();}catch(e){}
+        isRecording=false;orb.classList.remove('recording');status.textContent='Toca para hablar';
+        return;
+    }
+
+    voiceRec=startMic('es-MX',
+        async (text)=>{
+            result.innerHTML='<div style="color:var(--txtD);font-size:11px;">TÚ DIJISTE</div>'+text;
+            status.textContent='⏳ JULS está pensando...';
+            try{
+                const resp=await callClaude(text,chatHistory);
+                chatHistory.push({role:'user',content:text});
+                chatHistory.push({role:'assistant',content:resp});
+                result.innerHTML='<div style="color:var(--txtD);font-size:11px;">TÚ DIJISTE</div>'+text
+                    +'<div style="color:var(--orange);font-size:11px;margin-top:10px;font-weight:800;">👑 JULS RESPONDE</div>'
+                    +'<div style="color:var(--txt);">'+resp+'</div>';
+                status.textContent='🔊 JULS está hablando...';
+                speakES(resp);
+                setTimeout(()=>{status.textContent='Toca para hablar';},1200);
+            }catch(e){
+                result.innerHTML='❌ '+e.message;
+                status.textContent='Toca para hablar';
             }
-        }
-        
-        throw e;
-    }
+        },
+        ()=>{isRecording=true;orb.classList.add('recording');status.textContent='🎤 Escuchando... habla ahora';},
+        ()=>{isRecording=false;orb.classList.remove('recording');}
+    );
 }
 
+
 // ════════════════════════════════════════════════════════════════
-//  TTS (Text-to-Speech)
+// MOTOR DE VOZ (TTS) — carga de voces + desbloqueo
 // ════════════════════════════════════════════════════════════════
-function speak(txt, onEnd) {
-    if (!window.speechSynthesis) { onEnd?.(); return; }
-    try {
-        window.speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(txt.replace(/[*_#`]/g, '').substring(0, 280));
-        u.lang = 'es-MX';
-        u.rate = 1.0;
-        u.pitch = 1.1;
-        
-        const voices = window.speechSynthesis.getVoices();
-        const voz = voices.find(v => v.lang.startsWith('es') && v.name.toLowerCase().includes('female'))
-                 || voices.find(v => v.lang.startsWith('es')) || null;
-        if (voz) u.voice = voz;
-        if (onEnd) u.onend = onEnd;
+
+let VOICES=[];
+let ttsUnlocked=false;
+
+function loadVoices(){
+    if(!window.speechSynthesis)return;
+    VOICES=window.speechSynthesis.getVoices()||[];
+}
+loadVoices();
+if(window.speechSynthesis){
+    window.speechSynthesis.onvoiceschanged=loadVoices;
+}
+
+// Los navegadores móviles bloquean TTS hasta que hay un gesto del usuario.
+function unlockTTS(){
+    if(ttsUnlocked||!window.speechSynthesis)return;
+    try{
+        const u=new SpeechSynthesisUtterance(' ');
+        u.volume=0;
         window.speechSynthesis.speak(u);
-    } catch (e) {
-        onEnd?.();
-    }
+        ttsUnlocked=true;
+        loadVoices();
+    }catch(e){}
+}
+document.addEventListener('click',unlockTTS,{once:false});
+document.addEventListener('touchstart',unlockTTS,{once:false});
+
+function pickVoice(langPrefix){
+    if(!VOICES.length)loadVoices();
+    return VOICES.find(v=>v.lang.toLowerCase().startsWith(langPrefix)&&/female|mujer|mónica|monica|paulina|samantha|google/i.test(v.name))
+        || VOICES.find(v=>v.lang.toLowerCase().startsWith(langPrefix))
+        || null;
 }
 
+function speakLang(txt,langPrefix,langCode,rate){
+    if(!window.speechSynthesis||!txt)return;
+    unlockTTS();
+    try{
+        window.speechSynthesis.cancel();
+        const clean=txt.replace(/[*_#`>]/g,'').trim().substring(0,300);
+        if(!clean)return;
+        const u=new SpeechSynthesisUtterance(clean);
+        u.lang=langCode;
+        u.rate=rate||1.0;
+        u.pitch=1.05;
+        const v=pickVoice(langPrefix);
+        if(v)u.voice=v;
+        // Chrome a veces se "duerme": lo reactivamos
+        setTimeout(()=>{try{window.speechSynthesis.resume();}catch(e){}},100);
+        window.speechSynthesis.speak(u);
+    }catch(e){console.error('TTS:',e);}
+}
+
+function speakES(txt){speakLang(txt,'es','es-MX',1.0);}
+function speakEN(txt){speakLang(txt,'en','en-US',0.92);}
+
 // ════════════════════════════════════════════════════════════════
-//  NEW SPEECH RECOGNIZER
+// MICRÓFONO — helper único con manejo de errores
 // ════════════════════════════════════════════════════════════════
-function newSR() {
-    if (!SR) return null;
-    const r = new SR();
-    r.lang = 'es-MX';
-    r.continuous = false;
-    r.interimResults = false;
+
+function startMic(langCode,onText,onStart,onEnd){
+    if(!SR){
+        alert('⚠️ Tu navegador no soporta micrófono.\n\nUsa Chrome o Edge.');
+        onEnd&&onEnd();return;
+    }
+    if(location.protocol!=='https:'&&location.hostname!=='localhost'&&location.hostname!=='127.0.0.1'){
+        alert('⚠️ El micrófono necesita HTTPS.\n\nAbre la página con https:// o desde localhost.');
+        onEnd&&onEnd();return;
+    }
+    unlockTTS();
+    let r;
+    try{r=new SR();}catch(e){alert('No se pudo iniciar el micrófono');onEnd&&onEnd();return;}
+    r.lang=langCode;
+    r.continuous=false;
+    r.interimResults=false;
+    r.maxAlternatives=1;
+    let got=false;
+    r.onstart=()=>{onStart&&onStart();};
+    r.onresult=(e)=>{got=true;onText(e.results[0][0].transcript);};
+    r.onerror=(e)=>{
+        const msgs={
+            'not-allowed':'❌ Permiso denegado. Activa el micrófono en los ajustes del navegador (candado junto a la URL).',
+            'service-not-allowed':'❌ Permiso denegado por el sistema.',
+            'no-speech':'🔇 No se escuchó nada. Intenta de nuevo.',
+            'audio-capture':'❌ No se encontró micrófono.',
+            'network':'❌ Error de red en el reconocimiento de voz.'
+        };
+        alert(msgs[e.error]||('Error de micrófono: '+e.error));
+        onEnd&&onEnd();
+    };
+    r.onend=()=>{onEnd&&onEnd();};
+    try{r.start();}catch(e){onEnd&&onEnd();}
     return r;
 }
 
 // ════════════════════════════════════════════════════════════════
-//  CHAT
-// ════════════════════════════════════════════════════════════════
-async function sendChat() {
-    const inp = document.getElementById('chatIn');
-    const txt = inp.value.trim();
-    if (!txt) return;
-    
-    inp.value = '';
-    addMsg(txt, 'user');
-    chatHistory.push({ role: 'user', content: txt });
-    
-    const typing = addTyping();
-    try {
-        const reply = await callClaude(txt, chatHistory.slice(0, -1));
-        typing.remove();
-        addMsg(reply, 'bot');
-        chatHistory.push({ role: 'assistant', content: reply });
-        if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
-        speak(reply);
-    } catch (e) {
-        typing.remove();
-        addMsg('❌ Error: ' + e.message, 'bot');
-    }
-}
-
-function addMsg(txt, who) {
-    const d = document.createElement('div');
-    d.className = 'msg ' + who;
-    d.innerHTML = who === 'bot'
-        ? `<div class="bot-name">👑 JULS</div>${txt}`
-        : txt;
-    const msgs = document.getElementById('msgs');
-    msgs.appendChild(d);
-    d.scrollIntoView({ behavior: 'smooth' });
-    return d;
-}
-
-function addTyping() {
-    const d = document.createElement('div');
-    d.className = 'msg bot';
-    d.innerHTML = '<div class="bot-name">👑 JULS</div><div class="typing"><span></span><span></span><span></span></div>';
-    document.getElementById('msgs').appendChild(d);
-    d.scrollIntoView({ behavior: 'smooth' });
-    return d;
-}
-
-// ════════════════════════════════════════════════════════════════
-//  MIC CHAT
-// ════════════════════════════════════════════════════════════════
-function toggleMicChat() {
-    const btn = document.getElementById('btnMic');
-    if (micChatActive) {
-        micChatActive = false;
-        btn.classList.remove('on');
-        btn.textContent = '🎤';
-        return;
-    }
-    
-    const r = newSR();
-    if (!r) { alert('Usa Chrome o navegador con reconocimiento de voz'); return; }
-    
-    micChatActive = true;
-    btn.classList.add('on');
-    btn.textContent = '🔴';
-    
-    r.onresult = e => {
-        document.getElementById('chatIn').value = e.results[0][0].transcript;
-        micChatActive = false;
-        btn.classList.remove('on');
-        btn.textContent = '🎤';
-        sendChat();
-    };
-    
-    r.onerror = r.onend = () => {
-        micChatActive = false;
-        btn.classList.remove('on');
-        btn.textContent = '🎤';
-    };
-    
-    try {
-        r.start();
-    } catch (e) {
-        micChatActive = false;
-        btn.classList.remove('on');
-        btn.textContent = '🎤';
-    }
-}
-
-// ════════════════════════════════════════════════════════════════
-//  ORB VOICE
-// ════════════════════════════════════════════════════════════════
-function setOrb(cls, icon, statusTxt, statusCls) {
-    const orb = document.getElementById('orb');
-    const st = document.getElementById('orbStatus');
-    if (!orb || !st) return;
-    
-    orb.className = 'orb' + (cls ? ' ' + cls : '');
-    document.getElementById('orbIcon').textContent = icon;
-    st.textContent = statusTxt;
-    st.className = 'orb-status' + (statusCls ? ' ' + statusCls : '');
-}
-
-function resetOrb() {
-    listening = false;
-    setOrb('', '👑', 'Toca para hablar', '');
-}
-
-function toggleOrb() {
-    if (listening) {
-        window.speechSynthesis.cancel();
-        resetOrb();
-        return;
-    }
-    
-    const r = newSR();
-    if (!r) { alert('Usa Chrome o navegador con reconocimiento de voz'); return; }
-    
-    listening = true;
-    window.speechSynthesis.cancel();
-    
-    const trans = document.getElementById('orbTrans');
-    const bubble = document.getElementById('orbBubble');
-    trans.textContent = '';
-    bubble.classList.remove('show');
-    setOrb('listen', '🎙️', 'Escuchando...', 'listen');
-    
-    r.onresult = async e => {
-        const q = e.results[0][0].transcript;
-        listening = false;
-        trans.textContent = '"' + q + '"';
-        setOrb('think', '⏳', 'Pensando...', 'think');
-        
-        try {
-            const reply = await callClaude(q);
-            document.getElementById('orbBubbleTxt').textContent = reply;
-            bubble.classList.add('show');
-            setOrb('speak', '🔊', 'Hablando...', 'speak');
-            speak(reply, resetOrb);
-            
-            voiceHistory.unshift({ q, a: reply });
-            if (voiceHistory.length > 4) voiceHistory.pop();
-            document.getElementById('orbHistory').innerHTML = voiceHistory.map(h =>
-                `<div class="orb-hist-item"><div class="orb-hist-user">🗣️ ${h.q}</div><div class="orb-hist-juls">👑 ${h.a}</div></div>`
-            ).join('');
-        } catch (err) {
-            setOrb('', '😞', 'Error: ' + err.message, '');
-            setTimeout(resetOrb, 3000);
-        }
-    };
-    
-    r.onerror = e => {
-        if (e.error !== 'no-speech') trans.textContent = 'Error: ' + e.error;
-        resetOrb();
-    };
-    
-    r.onend = () => { if (listening) resetOrb(); };
-    
-    try {
-        r.start();
-    } catch (e) {
-        resetOrb();
-    }
-}
-
-// ════════════════════════════════════════════════════════════════
-//  TRANSLATOR (CON MÚLTIPLES IDIOMAS)
+// ENGLISH TUTOR
 // ════════════════════════════════════════════════════════════════
 
-const LANG_NAMES = {
-    es: 'español',
-    en: 'inglés',
-    pt: 'portugués',
-    it: 'italiano',
-    fr: 'francés',
-    de: 'alemán',
-    ja: 'japonés',
-    zh: 'chino',
-    ko: 'coreano',
-    ar: 'árabe',
-    ru: 'ruso',
-    nl: 'holandés',
-    sv: 'sueco',
-    pl: 'polaco'
-};
+let tutorHistory=[];
 
-function updateLangLabels() {
-    // Esta función se llama cuando cambias los dropdowns
-    // Aquí simplemente los valores se actualizan automáticamente
+function tutorCfg(){
+    const parts=document.getElementById('tutorLang').value.split('|');
+    return {name:parts[0],prefix:parts[1],code:parts[2],flag:parts[3],
+            level:document.getElementById('tutorLevel').value,
+            topic:document.getElementById('tutorTopic').value};
 }
 
-function swapLang() {
-    const fromSelect = document.getElementById('langFromSelect');
-    const toSelect = document.getElementById('langToSelect');
-    
-    const temp = fromSelect.value;
-    fromSelect.value = toSelect.value;
-    toSelect.value = temp;
+function tutorSystem(){
+    const c=tutorCfg();
+    return `You are JULS, a warm language tutor for a Spanish-speaking adult from Mexico who is learning ${c.name}.
+Student level: ${c.level}. Topic: ${c.topic}.
+
+The student may write in Spanish OR in ${c.name}. Handle both:
+- If they wrote in ${c.name}: correct it.
+- If they wrote in Spanish: show them how to say it in ${c.name} (that IS the correction).
+
+Reply with EXACTLY these five lines, nothing else:
+
+TARGET: <what the student meant, written correctly in ${c.name}>
+TARGET_ES: <that same sentence translated to Spanish>
+WHY: <short explanation in Spanish of the mistake or of the key words. If it was already perfect, a one-line compliment in Spanish.>
+REPLY: <your natural conversational answer in ${c.name}, ${c.level} level, 1-2 sentences, ending with a question to keep the chat going>
+REPLY_ES: <that same answer translated to Spanish>
+
+Never write anything outside those five lines.`;
 }
 
-async function translateText() {
-    const txt = document.getElementById('transIn').value.trim();
-    const out = document.getElementById('transOut');
-    const langFrom = document.getElementById('langFromSelect').value;
-    const langTo = document.getElementById('langToSelect').value;
-    
-    if (!txt) return;
-    
-    out.textContent = '⏳ Traduciendo...';
-    
-    const fromName = LANG_NAMES[langFrom] || langFrom;
-    const toName = LANG_NAMES[langTo] || langTo;
-    
-    try {
-        out.textContent = await callClaude(`Traduce de ${fromName} a ${toName}. Solo la traducción, nada más:\n\n${txt}`, []);
-    } catch (e) {
-        out.textContent = '❌ ' + e.message;
-    }
+function resetTutor(){
+    tutorHistory=[];
+    const c=tutorCfg();
+    const box=document.getElementById('tutorMsgs');
+    const lvl=document.getElementById('tutorLevel').selectedOptions[0].text;
+    const topic=document.getElementById('tutorTopic').selectedOptions[0].text;
+    document.getElementById('tutorIn').placeholder=`Escribe en español o en ${c.name}...`;
+    box.innerHTML=`<div class="msg bot"><div class="bot-name">🏫 PROFE JULS</div>
+        Nueva sesión ${c.flag} <b>${c.name}</b> · ${lvl} · ${topic}<br><br>
+        ¡Empecemos! Escribe algo — en español o en ${c.name}, como quieras.</div>`;
 }
 
-// ════════════════════════════════════════════════════════════════
-//  WEB GENERATOR
-// ════════════════════════════════════════════════════════════════
-async function genWeb() {
-    const desc = document.getElementById('genIn').value.trim();
-    const out = document.getElementById('genOut');
-    const btn = document.getElementById('btnCopy');
-    if (!desc) return;
-    
-    out.textContent = '⏳ Generando...';
-    out.classList.add('show');
-    btn.classList.remove('show');
-    
-    try {
-        const r = await callClaude(`Genera HTML completo (CSS incluido) para: ${desc}. Diseño oscuro profesional responsive. Colores DATESEG MX: rojo #c8102e, verde #006847. Solo el código HTML, sin explicaciones ni backticks.`, []);
-        out.textContent = r;
-        btn.classList.add('show');
-    } catch (e) {
-        out.textContent = '❌ ' + e.message;
-    }
-}
+async function sendTutor(){
+    const input=document.getElementById('tutorIn');const msg=input.value.trim();if(!msg)return;
+    const c=tutorCfg();
+    const box=document.getElementById('tutorMsgs');
+    const u=document.createElement('div');u.className='msg user';u.textContent=msg;box.appendChild(u);box.scrollTop=box.scrollHeight;
+    input.value='';input.disabled=true;
+    try{
+        const raw=await callClaudeSystem(msg,tutorHistory,tutorSystem());
+        tutorHistory.push({role:'user',content:msg});
+        tutorHistory.push({role:'assistant',content:raw});
+        if(tutorHistory.length>16)tutorHistory=tutorHistory.slice(-16);
 
-function copyCode() {
-    navigator.clipboard.writeText(document.getElementById('genOut').textContent);
-    const b = document.getElementById('btnCopy');
-    b.textContent = '✅ ¡Copiado!';
-    setTimeout(() => b.textContent = '📋 Copiar código', 2000);
-}
+        const g=(re)=>{const m=raw.match(re);return m?m[1].trim():'';};
+        const target=g(/TARGET:\s*(.+)/i);
+        const targetEs=g(/TARGET_ES:\s*(.+)/i);
+        const why=g(/WHY:\s*(.+)/i);
+        const reply=g(/REPLY:\s*(.+)/i);
+        const replyEs=g(/REPLY_ES:\s*([\s\S]+)/i);
+        const ok=/perfect|correcto|muy bien|excelente/i.test(why);
 
-// ════════════════════════════════════════════════════════════════
-//  ANTI-FRAUDE
-// ════════════════════════════════════════════════════════════════
-async function checkFraud() {
-    const phone = document.getElementById('fraudPhone').value.trim();
-    const msg = document.getElementById('fraudMsg').value.trim();
-    const res = document.getElementById('fraudRes');
-    if (!phone && !msg) return;
-    
-    res.className = 'fraud-res show f-warn';
-    res.textContent = '⏳ Analizando...';
-    
-    try {
-        const r = await callClaude(`Analiza posible fraude en México. Número: ${phone || 'N/A'}. Mensaje: ${msg || 'Solo número'}. Responde: VEREDICTO (SEGURO/SOSPECHOSO/PELIGROSO), RIESGO %, RAZONES, RECOMENDACIÓN. Breve y directo.`, []);
-        const up = r.toUpperCase();
-        res.className = 'fraud-res show ' + (up.includes('PELIGROSO') ? 'f-danger' : up.includes('SOSPECHOSO') ? 'f-warn' : 'f-safe');
-        res.textContent = r;
-        
-        fraudHist.unshift({
-            phone: phone || 'N/A',
-            v: up.includes('PELIGROSO') ? '🔴' : up.includes('SOSPECHOSO') ? '🟡' : '🟢',
-            f: new Date().toLocaleTimeString()
-        });
-        
-        if (fraudHist.length > 10) fraudHist = fraudHist.slice(0, 10);
-        localStorage.setItem('juls_fraud_hist', JSON.stringify(fraudHist));
-        loadFraudHist();
-    } catch (e) {
-        res.className = 'fraud-res show f-warn';
-        res.textContent = '❌ ' + e.message;
-    }
-}
-
-function loadFraudHist() {
-    if (!fraudHist.length) return;
-    document.getElementById('histCard').style.display = 'block';
-    document.getElementById('histList').innerHTML = fraudHist.map(f =>
-        `<div class="hist-item"><span>${f.phone}</span><span>${f.v} ${f.f}</span></div>`
-    ).join('');
-}
-
-// ════════════════════════════════════════════════════════════════
-//  API KEY
-// ════════════════════════════════════════════════════════════════
-function checkApiKey() {
-    const key = localStorage.getItem('juls_api_key');
-    const dot = document.getElementById('statusDot');
-    if (key && key.startsWith('sk-')) {
-        dot.classList.add('active');
-        dot.title = 'JULS activa ✓ (toca para cambiar API Key)';
-        return true;
-    }
-    dot.classList.remove('active');
-    dot.title = 'Sin API Key — toca para configurar';
-    return false;
-}
-
-function showApiModal() {
-    const modal = document.getElementById('apiModal');
-    modal.classList.add('show');
-    const hasKey = localStorage.getItem('juls_api_key');
-    if (hasKey) document.getElementById('apiKeyInput').value = hasKey;
-    document.getElementById('apiKeyInput').focus();
-}
-
-function closeApiModal() {
-    document.getElementById('apiModal').classList.remove('show');
-}
-
-function saveApiKey() {
-    const key = document.getElementById('apiKeyInput').value.trim();
-    if (!key || !key.startsWith('sk-')) {
-        alert('❌ API Key inválida. Debe empezar con sk-');
-        return;
-    }
-    
-    localStorage.setItem('juls_api_key', key);
-    closeApiModal();
-    checkApiKey();
-    addMsg('✅ API Key guardada. ¡JULS está activa! 💜 ¿En qué te ayudo?', 'bot');
-}
-
-// ════════════════════════════════════════════════════════════════
-//  INIT
-// ════════════════════════════════════════════════════════════════
-if (window.speechSynthesis) {
-    window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
-}
-loadFraudHist();
-
-if (!SR) {
-    document.querySelectorAll('.tab')[1].style.opacity = '0.5';
-    document.querySelectorAll('.tab')[1].style.cursor = 'not-allowed';
-}
-
-// Verificar API key al iniciar
-setTimeout(() => {
-    if (!checkApiKey()) {
-        showApiModal();
-    }
-}, 500);
-
-// Modal se cierra al presionar Escape
-document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeApiModal();
-});
-
-// ════════════════════════════════════════════════════════════════
-//  TUTOR DE INGLÉS
-// ════════════════════════════════════════════════════════════════
-
-const LESSONS = {
-    basics: {
-        title: '🔤 Alfabeto Inglés',
-        content: 'A B C D E F G H I J K L M N O P Q R S T U V W X Y Z',
-        example: 'apple, book, cat, dog, elephant, friend, good, happy',
-        prompt: 'Practica la pronunciación de estas palabras en inglés. Yo te digo cada una y tú repites.'
-    },
-    numbers: {
-        title: '🔢 Números (0-10)',
-        content: 'Zero, One, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten',
-        example: 'one, two, three, four, five, six, seven, eight, nine, ten',
-        prompt: 'Cuéntame del 1 al 10 en inglés, o solo algunos números que yo te diga.'
-    },
-    greetings: {
-        title: '👋 Saludos Básicos',
-        content: 'Hello • Good morning • Good afternoon • Good night • How are you? • I\'m fine • Nice to meet you',
-        example: 'Hello, how are you? I\'m fine, thank you. Nice to meet you.',
-        prompt: 'Intenta saludarme en inglés. Responde a mis preguntas como si fuera tu primer día de clase.'
-    },
-    verbs: {
-        title: '📝 Verbos Presente',
-        content: 'I am • You are • He/She/It is • We are • They are • I go • You go • He/She/It goes • We go • They go',
-        example: 'I am happy. You are here. He is a teacher. We are friends. They are students.',
-        prompt: 'Forma oraciones simples en presente. Yo te doy un verbo y tú lo usas en una oración.'
-    },
-    phrases: {
-        title: '💬 Frases Comunes',
-        content: 'What is your name? • Where are you from? • What do you do? • Do you speak English? • Can you help me?',
-        example: 'My name is Fer. I am from Mexico. I am a developer. Yes, I speak English a little.',
-        prompt: 'Responde a preguntas simples en inglés. No te preocupes por la perfección, enfócate en la pronunciación.'
-    }
-};
-
-let currentTutorLevel = 'basics';
-let tutorRecognizer = null;
-let tutorIsSpeaking = false;
-
-function loadTutorLevel() {
-    currentTutorLevel = document.getElementById('tutorLevel').value;
-    const lesson = LESSONS[currentTutorLevel];
-    
-    document.getElementById('tutorContent').innerHTML = `
-        <div style="margin-bottom:10px;">
-            <div style="font-size:13px;font-weight:800;color:var(--orange);">${lesson.title}</div>
-            <div style="font-size:12px;color:var(--txt);margin-top:6px;line-height:1.6;">${lesson.content}</div>
+        const d=document.createElement('div');d.className='msg bot';
+        d.innerHTML=`<div class="bot-name">🏫 PROFE JULS</div>
+        <div style="background:${ok?'rgba(0,255,136,.08)':'rgba(255,149,0,.08)'};border-left:3px solid ${ok?'var(--green)':'var(--orange)'};padding:8px 10px;border-radius:6px;margin-bottom:10px;">
+            <div style="color:${ok?'var(--green)':'var(--orange)'};font-weight:800;font-size:11px;margin-bottom:5px;">${ok?'✅ CORRECTO':'✏️ ASÍ SE DICE'}</div>
+            <div style="color:var(--cyan);font-weight:600;">${c.flag} ${target}</div>
+            <div style="color:var(--txtD);font-size:12px;margin-top:3px;">🇲🇽 ${targetEs}</div>
+            <div style="color:var(--txtD);font-size:11px;margin-top:7px;border-top:1px solid var(--bdr);padding-top:6px;">💡 ${why}</div>
         </div>
-    `;
-    
-    document.getElementById('tutorFeedback').style.display = 'none';
-    document.getElementById('tutorProgress').textContent = '📌 Presiona "Escuchar" para oír la pronunciación correcta';
+        <div style="color:var(--txt);">${c.flag} ${reply}</div>
+        <div style="color:var(--txtD);font-size:12px;margin-top:4px;font-style:italic;">🇲🇽 ${replyEs}</div>
+        <button onclick="speakLang(this.dataset.t,'${c.prefix}','${c.code}',0.9)" data-t="${(target+'. '+reply).replace(/"/g,'&quot;')}"
+            style="margin-top:10px;padding:6px 12px;font-size:11px;">🔊 Escuchar en ${c.name}</button>`;
+        box.appendChild(d);box.scrollTop=box.scrollHeight;
+        speakLang(reply,c.prefix,c.code,0.9);
+    }catch(e){
+        const d=document.createElement('div');d.className='msg bot';d.innerHTML=`<div class="bot-name">❌ Error</div>${e.message}`;box.appendChild(d);
+    }finally{input.disabled=false;input.focus();}
 }
 
-function speakTutorExample() {
-    if (!window.speechSynthesis) {
-        alert('Tu navegador no soporta síntesis de voz. Usa Chrome.');
-        return;
-    }
-    
-    const lesson = LESSONS[currentTutorLevel];
-    tutorIsSpeaking = true;
-    document.getElementById('btnPracticeTutor').disabled = true;
-    
-    try {
-        const u = new SpeechSynthesisUtterance(lesson.example);
-        u.lang = 'en-US';
-        u.rate = 0.9;
-        u.pitch = 1.0;
-        
-        const voices = window.speechSynthesis.getVoices();
-        const voz = voices.find(v => v.lang.startsWith('en')) || null;
-        if (voz) u.voice = voz;
-        
-        u.onend = () => {
-            tutorIsSpeaking = false;
-            document.getElementById('btnPracticeTutor').disabled = false;
-            document.getElementById('tutorProgress').textContent = '✅ Escuchaste. Ahora presiona "Practicar" para intentar.';
-        };
-        
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.speak(u);
-    } catch (e) {
-        tutorIsSpeaking = false;
-        document.getElementById('btnPracticeTutor').disabled = false;
-        document.getElementById('tutorProgress').textContent = '❌ Error: ' + e.message;
-    }
+function tutorMic(){
+    const btn=document.getElementById('tutorMicBtn');
+    const c=tutorCfg();
+    const useTarget=confirm(`¿Vas a hablar en ${c.name}?\n\nAceptar = ${c.name}\nCancelar = Español`);
+    startMic(useTarget?c.code:'es-MX',
+        (text)=>{document.getElementById('tutorIn').value=text;sendTutor();},
+        ()=>{btn.textContent='🔴';},
+        ()=>{btn.textContent='🎤';}
+    );
 }
 
-function practiceTutorSpeech() {
-    if (!SR) { alert('Usa Chrome para la voz'); return; }
-    if (tutorIsSpeaking) return;
-    
-    const r = newSR();
-    r.lang = 'en-US';
-    
-    const btn = document.getElementById('btnPracticeTutor');
-    btn.textContent = '🔴 Grabando...';
-    btn.style.background = 'rgba(230,57,70,.3)';
-    
-    document.getElementById('tutorProgress').textContent = '🎙️ Hablando...';
-    
-    r.onresult = async e => {
-        const userText = e.results[0][0].transcript;
-        btn.textContent = '🎤 Practicar';
-        btn.style.background = 'linear-gradient(135deg,var(--orange),#ff9500)';
-        
-        const lesson = LESSONS[currentTutorLevel];
-        document.getElementById('tutorProgress').textContent = '⏳ Analizando tu pronunciación...';
-        
-        try {
-            const feedback = await callClaude(
-                `Eres un profesor de inglés. El estudiante dijo: "${userText}" cuando intentaba practicar: ${lesson.example}. 
-                 
-                 EVALÚA:
-                 1. ¿Qué palabras pronunció bien?
-                 2. ¿Qué necesita mejorar?
-                 3. Cómo debería sonar correctamente (escrito).
-                 4. Un consejo motivacional.
-                 
-                 Sé breve y amable. Responde en español.`,
-                []
-            );
-            
-            const feedbackDiv = document.getElementById('tutorFeedback');
-            feedbackDiv.innerHTML = `
-                <div style="margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--bdr);">
-                    <div style="font-size:11px;color:var(--orange);font-weight:800;">Dijiste:</div>
-                    <div style="font-size:12px;color:var(--txt);">"${userText}"</div>
-                </div>
-                <div style="color:var(--txt);font-size:12px;line-height:1.6;">${feedback}</div>
-            `;
-            feedbackDiv.style.display = 'block';
-            
-            document.getElementById('tutorProgress').textContent = '✨ ¡Buen intento! Presiona "Practicar" de nuevo para seguir.';
-            
-            speak(feedback);
-        } catch (err) {
-            document.getElementById('tutorFeedback').innerHTML = '❌ Error: ' + err.message;
-            document.getElementById('tutorFeedback').style.display = 'block';
-        }
-    };
-    
-    r.onerror = () => {
-        btn.textContent = '🎤 Practicar';
-        btn.style.background = 'linear-gradient(135deg,var(--orange),#ff9500)';
-        document.getElementById('tutorProgress').textContent = '❌ No capturé lo que dijiste. Intenta de nuevo.';
-    };
-    
-    r.onend = () => {
-        btn.textContent = '🎤 Practicar';
-        btn.style.background = 'linear-gradient(135deg,var(--orange),#ff9500)';
-    };
-    
-    try {
-        r.start();
-    } catch (e) {
-        btn.textContent = '🎤 Practicar';
-        btn.style.background = 'linear-gradient(135deg,var(--orange),#ff9500)';
+async function callClaudeSystem(userMsg,ctx,sys){
+    const apiKey=localStorage.getItem('juls_api_key');
+    if(!apiKey){openApiModal();throw new Error('API Key requerida');}
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+        body:JSON.stringify({model:currentModel,max_tokens:600,system:sys,messages:[...ctx,{role:'user',content:userMsg}]})
+    });
+    const data=await res.json();
+    if(!res.ok){
+        modelErrors[currentModel]=(modelErrors[currentModel]||0)+1;
+        if(modelErrors[currentModel]>=3){const n=MODELS.indexOf(currentModel)+1;if(n<MODELS.length){currentModel=MODELS[n];return callClaudeSystem(userMsg,ctx,sys);}}
+        throw new Error(data.error?.message||'Error API');
     }
+    return data.content[0].text;
 }
 
-// Cargar lección al iniciar
-setTimeout(() => loadTutorLevel(), 1000);
+// ════════════════════════════════════════════════════════════════
+// TRADUCTOR
+// ════════════════════════════════════════════════════════════════
+
+async function translateText(){
+    const text=document.getElementById('transInput').value.trim();if(!text)return;
+    const lang=document.getElementById('transLang').value;
+    document.getElementById('transResult').textContent='⏳ Traduciendo...';
+    try{
+        const response=await callClaude(`Traduce esto al ${lang}: ${text}`,chatHistory);
+        document.getElementById('transResult').textContent='✅ '+response;
+    }catch(e){document.getElementById('transResult').textContent='❌ '+e.message;}
+}
+
+// ════════════════════════════════════════════════════════════════
+// WEB GENERATOR
+// ════════════════════════════════════════════════════════════════
+
+async function generateWeb(){
+    const prompt=document.getElementById('webPrompt').value.trim();if(!prompt)return;
+    document.getElementById('webResult').value='⏳ Generando...';
+    try{
+        const response=await callClaude(`Genera código HTML/CSS/JS minimalista para: ${prompt}. Responde SOLO con el código sin explicaciones.`,chatHistory);
+        document.getElementById('webResult').value=response;
+    }catch(e){document.getElementById('webResult').value='❌ '+e.message;}
+}
+
+function copyWebCode(){const code=document.getElementById('webResult').value;navigator.clipboard.writeText(code);alert('✅ Código copiado');}
+
+// ════════════════════════════════════════════════════════════════
+// ANTI-FRAUDE
+// ════════════════════════════════════════════════════════════════
+
+async function analyzeTransaction(){
+    const tx=document.getElementById('fraudInput').value.trim();if(!tx)return;
+    document.getElementById('fraudResult').textContent='⏳ Analizando...';
+    try{
+        const response=await callClaude(`Analiza esta transacción para detectar fraude: ${tx}. Sé conciso.`,chatHistory);
+        document.getElementById('fraudResult').textContent='🛡️ '+response;
+    }catch(e){document.getElementById('fraudResult').textContent='❌ '+e.message;}
+}
+
+// ════════════════════════════════════════════════════════════════
+// TABS
+// ════════════════════════════════════════════════════════════════
+
+function switchTab(name,el){
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.getElementById(name+'Panel').classList.add('active');el.classList.add('active');
+}
+
+// ════════════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════════════
+
+window.addEventListener('load',()=>{updateStatus();setTimeout(()=>{if(!localStorage.getItem('juls_api_key')){openApiModal();}},500);});
 </script>
+
 </body>
 </html>
