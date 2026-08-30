@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>👑 JULS — DATESEG MX</title>
+<style>
+:root{--bg:#0a0d18;--bg2:#0f1420;--bg3:#151d2e;--orange:#ff9500;--purple:#9b59f7;--cyan:#00d9ff;--txt:#f0f5ff;--txtD:#7890b8;--bdr:#1e3058;--green:#00ff88;--red:#ff3366;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;background:var(--bg);color:var(--txt);font-family:'Segoe UI',Arial,sans-serif;}
+.app{display:flex;flex-direction:column;height:100vh;background:linear-gradient(135deg,#0a0d18 0%,#0f1420 100%);}
+.header{background:linear-gradient(135deg,#0f1420,#151d2e);border-bottom:2px solid var(--orange);padding:14px 16px;display:flex;align-items:center;gap:14px;box-shadow:0 4px 20px rgba(255,149,0,0.15);}
+.logo-svg{width:56px;height:56px;min-width:56px;}
+.header-info{flex:1;}
+.header-name{font-size:22px;font-weight:900;background:linear-gradient(135deg,var(--orange),#ff8800);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:1px;}
+.header-sub{font-size:11px;color:var(--txtD);letter-spacing:0.5px;}
+.status-btn{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--red),#ff5588);border:2px solid var(--orange);cursor:pointer;box-shadow:0 0 15px rgba(255,51,102,0.4);transition:all .3s;font-size:22px;display:flex;align-items:center;justify-content:center;}
+.status-btn:hover{transform:scale(1.05);box-shadow:0 0 25px rgba(255,51,102,0.6);}
+.status-btn.active{background:linear-gradient(135deg,var(--green),#00ff88);box-shadow:0 0 15px rgba(0,255,136,0.4);}
+.tabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--bdr);overflow-x:auto;padding:0 4px;}
+.tab{flex:0 0 auto;padding:12px 14px;border:none;background:transparent;color:var(--txtD);cursor:pointer;font-size:11px;font-weight:700;text-transform:uppercase;border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap;letter-spacing:0.5px;}
+.tab:hover{color:var(--orange);}
+.tab.active{color:var(--orange);border-bottom-color:var(--orange);background:rgba(255,149,0,0.05);}
+.content{flex:1;overflow:hidden;display:flex;flex-direction:column;}
+.panel{display:none;flex:1;flex-direction:column;overflow:hidden;}
+.panel.active{display:flex;}
+.messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;}
+.msg{max-width:85%;padding:12px 16px;border-radius:14px;font-size:13px;line-height:1.6;word-wrap:break-word;}
+.msg.user{align-self:flex-end;background:linear-gradient(135deg,#1a2f5e,#2a4a9a);border:1px solid #3a5aaa;}
+.msg.bot{align-self:flex-start;background:linear-gradient(135deg,var(--bg3),#1a2f5e);border:1px solid var(--bdr);}
+.msg.bot .bot-name{font-size:11px;color:var(--orange);font-weight:900;margin-bottom:6px;letter-spacing:0.5px;}
+.input-bar{background:var(--bg2);border-top:1px solid var(--bdr);padding:12px 14px;display:flex;gap:10px;align-items:center;}
+.chat-in{flex:1;padding:12px 16px;background:linear-gradient(135deg,var(--bg3),#1a2f5e);border:1px solid var(--bdr);border-radius:24px;color:var(--txt);font-size:13px;font-family:inherit;transition:all .2s;}
+.chat-in:focus{outline:none;border-color:var(--orange);box-shadow:0 0 12px rgba(255,149,0,0.2);}
+.btn-send{width:44px;height:44px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--orange),#ff8800);color:#fff;font-size:18px;cursor:pointer;box-shadow:0 4px 12px rgba(255,149,0,0.3);transition:all .2s;}
+.btn-send:hover{transform:scale(1.05);box-shadow:0 6px 20px rgba(255,149,0,0.4);}
+.btn-send:active{transform:scale(0.95);}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-overlay.show{display:flex !important;}
+.modal-box{background:linear-gradient(135deg,#0f1420,#151d2e);border:2px solid var(--orange);border-radius:18px;padding:28px;width:90%;max-width:400px;box-shadow:0 0 40px rgba(255,149,0,0.4);}
+.modal-title{font-size:22px;font-weight:900;background:linear-gradient(135deg,var(--orange),#ff8800);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:16px;}
+.modal-text{font-size:13px;color:var(--txtD);margin-bottom:18px;line-height:1.7;}
+.modal-text a{color:var(--orange);text-decoration:underline;font-weight:700;}
+.modal input{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--orange);background:var(--bg3);color:var(--txt);font-size:13px;margin-bottom:18px;font-family:monospace;}
+.modal input:focus{outline:none;border-color:#ff8800;box-shadow:0 0 12px rgba(255,149,0,0.3);}
+.modal-buttons{display:flex;gap:12px;}
+.modal-btn{flex:1;padding:14px;background:linear-gradient(135deg,var(--orange),#ff8800);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:800;cursor:pointer;transition:all .2s;}
+.modal-btn:hover{opacity:0.9;transform:translateY(-2px);box-shadow:0 6px 20px rgba(255,149,0,0.3);}
+.modal-btn-cancel{background:var(--bg3);border:1px solid var(--bdr);color:var(--txt);}
+.modal-btn-cancel:hover{border-color:var(--orange);box-shadow:0 0 12px rgba(255,149,0,0.1);}
+::-webkit-scrollbar{width:8px;}
+::-webkit-scrollbar-track{background:var(--bg3);}
+::-webkit-scrollbar-thumb{background:linear-gradient(135deg,var(--orange),#ff8800);border-radius:4px;}
+.control-section{padding:16px;background:var(--bg3);margin:8px 16px;border-radius:12px;border:1px solid var(--bdr);}
+.control-label{font-size:12px;color:var(--orange);font-weight:800;margin-bottom:8px;}
+.control-group{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+select{padding:8px 12px;background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-size:12px;cursor:pointer;}
+button{background:linear-gradient(135deg,var(--orange),#ff8800);border:none;padding:10px 16px;border-radius:8px;color:#fff;font-size:12px;font-weight:800;cursor:pointer;transition:all .2s;}
+button:hover{opacity:0.9;transform:translateY(-1px);}
+.translate-result{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:12px;margin-top:12px;color:var(--cyan);font-size:12px;min-height:40px;}
+.orb{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,#1a2f5e,#2a4a9a);border:2px solid var(--orange);margin:20px auto;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:48px;transition:all .3s;}
+.orb:hover{transform:scale(1.05);box-shadow:0 0 20px rgba(255,149,0,0.3);}
+.orb.recording{background:linear-gradient(135deg,var(--red),#ff5588);box-shadow:0 0 30px rgba(255,51,102,0.5);}
+</style>
+</head>
+<body>
+
+<div class="app">
+    <!-- HEADER -->
+    <div class="header">
+        <svg class="logo-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <filter id="glow"><feGaussianBlur stdDeviation="3" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                <radialGradient id="bgGradient"><stop offset="0%" style="stop-color:#1a2f5e"/><stop offset="100%" style="stop-color:#0a0d18"/></radialGradient>
+                <linearGradient id="jGradient" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#fff"/><stop offset="100%" style="stop-color:#00d9ff"/></linearGradient>
+            </defs>
+            <rect width="200" height="200" rx="40" fill="url(#bgGradient)"/>
+            <g filter="url(#glow)"><ellipse cx="60" cy="60" rx="18" ry="22" fill="#ff9500"/><circle cx="55" cy="50" r="6" fill="#ffb84d"/></g>
+            <g filter="url(#glow)"><polygon points="100,40 95,65 105,65" fill="#ff9500"/><circle cx="100" cy="38" r="7" fill="#ffb84d"/></g>
+            <g filter="url(#glow)"><ellipse cx="140" cy="60" rx="18" ry="22" fill="#ff9500"/><circle cx="145" cy="50" r="6" fill="#ffb84d"/></g>
+            <rect x="45" y="75" width="110" height="22" rx="11" fill="#ff9500" filter="url(#glow)"/>
+            <circle cx="50" cy="86" r="8" fill="#ffb84d"/><circle cx="150" cy="86" r="8" fill="#ffb84d"/>
+            <g filter="url(#glow)"><rect x="88" y="85" width="24" height="80" rx="12" fill="url(#jGradient)"/><path d="M 88 165 Q 60 165 60 140" stroke="url(#jGradient)" stroke-width="24" fill="none" stroke-linecap="round"/><rect x="75" y="80" width="50" height="16" rx="8" fill="url(#jGradient)"/></g>
+            <g fill="#9b59f7" opacity="0.8" filter="url(#glow)"><polygon points="35,50 40,55 35,60 30,55"/><polygon points="165,50 170,55 165,60 160,55"/><polygon points="30,150 35,155 30,160 25,155"/><polygon points="170,150 175,155 170,160 165,155"/><polygon points="25,100 30,105 25,110 20,105"/><polygon points="175,100 180,105 175,110 170,105"/></g>
+            <g fill="#ff6b00" opacity="0.7" filter="url(#glow)"><circle cx="45" cy="45" r="3"/><circle cx="155" cy="45" r="3"/><circle cx="40" cy="130" r="3"/><circle cx="160" cy="130" r="3"/><circle cx="50" cy="100" r="2.5"/><circle cx="150" cy="100" r="2.5"/></g>
+        </svg>
+        <div class="header-info">
+            <div class="header-name">JULS</div>
+            <div class="header-sub">DATESEG MX • Para mi hija Juls 💜</div>
+        </div>
+        <button class="status-btn" id="statusBtn" onclick="openApiModal()" title="Configurar API Key">🔑</button>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab('chat', this)">💬 Chat</button>
+        <button class="tab" onclick="switchTab('voice', this)">🎤 Voz</button>
+        <button class="tab" onclick="switchTab('tutor', this)">🏫 English</button>
+        <button class="tab" onclick="switchTab('trans', this)">🌐 Traductor</button>
+        <button class="tab" onclick="switchTab('files', this)">📎 Archivos</button>
+        <button class="tab" onclick="switchTab('contactos', this)">📱 Contactos</button>
+        <button class="tab" onclick="switchTab('web', this)">🕸️ Web Gen</button>
+        <button class="tab" onclick="switchTab('fraud', this)">🛡️ Anti-Fraude</button>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+        <!-- CHAT -->
+        <div class="panel active" id="chatPanel">
+            <div class="messages" id="msgs">
+                <div class="msg bot">
+                    <div class="bot-name">👑 JULS</div>
+                    ¡Hola! Soy JULS, tu asistente de DATESEG MX 💜<br>Estoy aquí para ayudarte en tecnología automotriz, seguridad y análisis.<br>¿En qué te puedo ayudar?
+                </div>
+            </div>
+            <div class="input-bar">
+                <button class="btn-send" id="chatMicBtn" onclick="chatMic()" style="background:linear-gradient(135deg,var(--purple),#7b3ff0);">🎤</button>
+                <input class="chat-in" id="chatIn" placeholder="Cuéntame algo..." onkeydown="if(event.key==='Enter')sendChat()">
+                <button class="btn-send" onclick="sendChat()">➤</button>
+            </div>
+        </div>
+
+        <!-- VOZ -->
+        <div class="panel" id="voicePanel">
+            <div style="flex:1;overflow-y:auto;padding:16px;">
+                <div class="control-section">
+                    <div class="control-label">🎤 MICRÓFONO</div>
+                    <div class="orb" id="voiceOrb" onclick="toggleVoice()">
+                        <span id="voiceIcon">🎤</span>
+                    </div>
+                    <div style="text-align:center;color:var(--txtD);font-size:12px;margin-top:12px;" id="voiceStatus">Toca para hablar</div>
+                    <div class="translate-result" id="voiceResult"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ENGLISH TUTOR -->
+        <div class="panel" id="tutorPanel">
+            <div class="control-section" style="margin:8px 16px 0;">
+                <div class="control-label">🏫 TUTOR DE IDIOMAS — Plática con traducción y corrección</div>
+                <div class="control-group">
+                    <select id="tutorLang" onchange="resetTutor()">
+                        <option value="English|en|en-US|🇺🇸">🇺🇸 Inglés</option>
+                        <option value="French|fr|fr-FR|🇫🇷">🇫🇷 Francés</option>
+                        <option value="Italian|it|it-IT|🇮🇹">🇮🇹 Italiano</option>
+                        <option value="Portuguese|pt|pt-BR|🇧🇷">🇧🇷 Portugués</option>
+                        <option value="German|de|de-DE|🇩🇪">🇩🇪 Alemán</option>
+                        <option value="Japanese|ja|ja-JP|🇯🇵">🇯🇵 Japonés</option>
+                        <option value="Chinese|zh|zh-CN|🇨🇳">🇨🇳 Chino</option>
+                    </select>
+                    <select id="tutorLevel" onchange="resetTutor()">
+                        <option value="beginner">🔤 Principiante</option>
+                        <option value="intermediate">📗 Intermedio</option>
+                        <option value="advanced">🎓 Avanzado</option>
+                    </select>
+                    <select id="tutorTopic" onchange="resetTutor()">
+                        <option value="daily life">☕ Vida diaria</option>
+                        <option value="work and business">💼 Trabajo</option>
+                        <option value="cars and mechanics">🚗 Autos</option>
+                        <option value="travel">✈️ Viajes</option>
+                        <option value="free conversation">💬 Libre</option>
+                    </select>
+                    <button onclick="resetTutor()">🔄 Reiniciar</button>
+                </div>
+            </div>
+            <div class="messages" id="tutorMsgs">
+                <div class="msg bot">
+                    <div class="bot-name">🏫 PROFE JULS</div>
+                    ¡Hola! Soy tu profe de idiomas. Elige idioma, nivel y tema, y empieza a hablar.<br><br>
+                    <span style="color:var(--txtD);font-size:12px;">Puedes escribir en español o en el idioma que estudias — yo te traduzco todo en ambos sentidos y te corrijo.</span>
+                </div>
+            </div>
+            <div class="input-bar">
+                <button class="btn-send" id="tutorMicBtn" onclick="tutorMic()" style="background:linear-gradient(135deg,var(--purple),#7b3ff0);">🎤</button>
+                <input class="chat-in" id="tutorIn" placeholder="Escribe aquí..." onkeydown="if(event.key==='Enter')sendTutor()">
+                <button class="btn-send" onclick="sendTutor()">➤</button>
+            </div>
+        </div>
+
+        <!-- TRADUCTOR -->
+        <div class="panel" id="transPanel">
+            <div style="flex:1;overflow-y:auto;padding:16px;">
+                <div class="control-section">
+                    <div class="control-label">📞 MODO LLAMADA — Traducción en vivo</div>
+                    <div class="control-group">
+                        <select id="callLangA">
+                            <option value="es-MX|Spanish|🇲🇽">🇲🇽 Español</option>
+                            <option value="en-US|English|🇺🇸">🇺🇸 Inglés</option>
+                            <option value="fr-FR|French|🇫🇷">🇫🇷 Francés</option>
+                            <option value="pt-BR|Portuguese|🇧🇷">🇧🇷 Portugués</option>
+                            <option value="it-IT|Italian|🇮🇹">🇮🇹 Italiano</option>
+                            <option value="de-DE|German|🇩🇪">🇩🇪 Alemán</option>
+                            <option value="ja-JP|Japanese|🇯🇵">🇯🇵 Japonés</option>
+                            <option value="zh-CN|Chinese|🇨🇳">🇨🇳 Chino</option>
+                        </select>
+                        <span style="color:var(--orange);font-weight:900;align-self:center;">⇄</span>
+                        <select id="callLangB">
+                            <option value="en-US|English|🇺🇸">🇺🇸 Inglés</option>
+                            <option value="es-MX|Spanish|🇲🇽">🇲🇽 Español</option>
+                            <option value="fr-FR|French|🇫🇷">🇫🇷 Francés</option>
+                            <option value="pt-BR|Portuguese|🇧🇷">🇧🇷 Portugués</option>
+                            <option value="it-IT|Italian|🇮🇹">🇮🇹 Italiano</option>
+                            <option value="de-DE|German|🇩🇪">🇩🇪 Alemán</option>
+                            <option value="ja-JP|Japanese|🇯🇵">🇯🇵 Japonés</option>
+                            <option value="zh-CN|Chinese|🇨🇳">🇨🇳 Chino</option>
+                        </select>
+                    </div>
+                    <div style="display:flex;gap:10px;margin-top:12px;">
+                        <div class="orb" id="orbA" onclick="callSpeak('A')" style="flex:1;width:auto;height:90px;margin:0;font-size:14px;flex-direction:column;">
+                            <span style="font-size:28px;">🎤</span>
+                            <span id="orbALabel" style="font-size:11px;margin-top:4px;">TÚ</span>
+                        </div>
+                        <div class="orb" id="orbB" onclick="callSpeak('B')" style="flex:1;width:auto;height:90px;margin:0;font-size:14px;flex-direction:column;border-color:var(--purple);">
+                            <span style="font-size:28px;">🎤</span>
+                            <span id="orbBLabel" style="font-size:11px;margin-top:4px;">ELLOS</span>
+                        </div>
+                    </div>
+                    <button onclick="toggleAutoCall()" id="autoCallBtn" style="width:100%;margin-top:12px;">🔁 Modo automático (manos libres)</button>
+                    <div style="text-align:center;color:var(--txtD);font-size:11px;margin-top:8px;" id="callStatus">Toca un lado para hablar</div>
+                    <div id="callLog" style="margin-top:12px;max-height:280px;overflow-y:auto;"></div>
+                    <button onclick="exportCallLog()" style="width:100%;margin-top:8px;background:var(--bg2);border:1px solid var(--bdr);">💾 Exportar conversación</button>
+                </div>
+
+                <div class="control-section">
+                    <div class="control-label">✍️ TRADUCCIÓN DE TEXTO</div>
+                    <input type="text" id="transInput" placeholder="Escribe texto a traducir..." style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg2);color:var(--txt);margin-bottom:12px;">
+                    <div class="control-group">
+                        <select id="transLang">
+                            <option value="es">Español</option>
+                            <option value="en">English</option>
+                            <option value="fr">Français</option>
+                            <option value="de">Deutsch</option>
+                            <option value="it">Italiano</option>
+                            <option value="pt">Português</option>
+                            <option value="ru">Русский</option>
+                            <option value="zh">中文</option>
+                            <option value="ja">日本語</option>
+                            <option value="ko">한국어</option>
+                        </select>
+                        <button onclick="translateText()">Traducir</button>
+                    </div>
+                    <div class="translate-result" id="transResult"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ARCHIVOS -->
+        <div class="panel" id="filesPanel">
+            <div style="flex:1;overflow-y:auto;padding:16px;">
+                <div class="control-section">
+                    <div class="control-label">📎 IMPORTAR — Foto o documento</div>
+                    <input type="file" id="fileInput" accept="image/*,.pdf,.txt,.md,.csv,.json,.html,.js,.java,.xml" onchange="handleFile(event)"
+                        style="width:100%;padding:10px;border-radius:8px;border:1px dashed var(--orange);background:var(--bg2);color:var(--txt);font-size:12px;">
+                    <div style="color:var(--txtD);font-size:11px;margin-top:8px;">Fotos (JPG/PNG), PDF, TXT, CSV, JSON, código…</div>
+                    <div id="filePreview" style="margin-top:12px;"></div>
+                    <input type="text" id="filePrompt" placeholder="¿Qué quieres que haga con esto?" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg2);color:var(--txt);margin-top:12px;">
+                    <div class="control-group" style="margin-top:10px;">
+                        <button onclick="askFile()">🔍 Analizar</button>
+                        <button onclick="askFile('Traduce todo el contenido al español.')">🌐 Traducir</button>
+                        <button onclick="askFile('Haz un resumen claro y breve.')">📝 Resumir</button>
+                    </div>
+                    <div class="translate-result" id="fileResult" style="max-height:300px;overflow-y:auto;"></div>
+                    <button onclick="exportFileResult()" style="width:100%;margin-top:8px;background:var(--bg2);border:1px solid var(--bdr);">💾 Exportar resultado</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTACTOS -->
+        <div class="panel" id="contactosPanel">
+            <div style="flex:1;overflow-y:auto;padding:16px;">
+
+                <!-- NOTIFICACIONES -->
+                <div class="control-section">
+                    <div class="control-label">🔔 RECORDATORIOS</div>
+                    <div style="color:var(--txtD);font-size:12px;margin-bottom:10px;">
+                        JULS te avisa aunque tengas otra app abierta.
+                    </div>
+                    <div class="control-group" style="margin-bottom:10px;">
+                        <input type="text" id="reminderText" placeholder="¿De qué te recuerdo?"
+                            style="flex:1;padding:10px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg2);color:var(--txt);">
+                        <input type="number" id="reminderMins" value="10" min="1" max="1440"
+                            style="width:70px;padding:10px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg2);color:var(--txt);text-align:center;">
+                        <span style="color:var(--txtD);font-size:11px;align-self:center;">min</span>
+                    </div>
+                    <button onclick="crearRecordatorio()" style="width:100%;">⏰ Crear recordatorio</button>
+                    <div id="reminderStatus" style="color:var(--green);font-size:11px;margin-top:8px;text-align:center;"></div>
+                    <div id="reminderList" style="margin-top:12px;"></div>
+                </div>
+
+                <!-- ENVIAR WHATSAPP -->
+                <div class="control-section">
+                    <div class="control-label">💬 ENVIAR WHATSAPP</div>
+                    <input type="text" id="waName" placeholder="Nombre del contacto"
+                        style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg2);color:var(--txt);margin-bottom:10px;">
+                    <input type="tel" id="waNumber" placeholder="Número con lada: 521XXXXXXXXXX"
+                        style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg2);color:var(--txt);margin-bottom:10px;">
+                    <textarea id="waMessage" placeholder="Mensaje..." rows="3"
+                        style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg2);color:var(--txt);margin-bottom:10px;resize:none;"></textarea>
+                    <div class="control-group">
+                        <button onclick="enviarWhatsApp()">💬 Abrir WhatsApp</button>
+                        <button onclick="dictarMensajeWA()" style="background:var(--purple);">🎤 Dictar</button>
+                    </div>
+                    <div id="waStatus" style="color:var(--txtD);font-size:11px;margin-top:8px;text-align:center;"></div>
+                </div>
+
+                <!-- LLAMAR -->
+                <div class="control-section">
+                    <div class="control-label">📞 REALIZAR LLAMADA</div>
+                    <div style="color:var(--txtD);font-size:11px;margin-bottom:10px;">
+                        Abre el marcador con el número listo. Tú confirmas la llamada.
+                    </div>
+                    <input type="text" id="callName" placeholder="Nombre (opcional)"
+                        style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg2);color:var(--txt);margin-bottom:10px;">
+                    <input type="tel" id="callNumber" placeholder="Número: 521XXXXXXXXXX"
+                        style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg2);color:var(--txt);margin-bottom:10px;">
+                    <div class="control-group">
+                        <button onclick="realizarLlamada()" style="background:var(--green);color:#000;">📞 Llamar</button>
+                        <button onclick="dictarNumero()" style="background:var(--purple);">🎤 Dictar número</button>
+                    </div>
+                </div>
+
+                <!-- AGENDA RÁPIDA -->
+                <div class="control-section">
+                    <div class="control-label">⭐ AGENDA RÁPIDA</div>
+                    <div style="color:var(--txtD);font-size:11px;margin-bottom:12px;">
+                        Tus contactos frecuentes. Toca para llamar o mandar mensaje.
+                    </div>
+                    <div class="control-group" style="margin-bottom:12px;">
+                        <input type="text" id="agendaNombre" placeholder="Nombre"
+                            style="flex:1;padding:8px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg2);color:var(--txt);">
+                        <input type="tel" id="agendaNumero" placeholder="Número"
+                            style="flex:1;padding:8px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg2);color:var(--txt);">
+                        <button onclick="agregarAgenda()" style="padding:8px 14px;">➕</button>
+                    </div>
+                    <div id="agendaList"></div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- WEB GEN -->
+        <div class="panel" id="webPanel">
+            <div style="flex:1;overflow-y:auto;padding:16px;">
+                <div class="control-section">
+                    <div class="control-label">🕸️ WEB GENERATOR</div>
+                    <input type="text" id="webPrompt" placeholder="Describe tu página web..." style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg2);color:var(--txt);margin-bottom:12px;">
+                    <button onclick="generateWeb()" style="width:100%;">Generar Código</button>
+                    <textarea id="webResult" readonly style="width:100%;height:200px;margin-top:12px;padding:10px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg2);color:var(--cyan);font-family:monospace;font-size:11px;"></textarea>
+                    <button onclick="copyWebCode()" style="width:100%;margin-top:8px;">📋 Copiar Código</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ANTI-FRAUDE -->
+        <div class="panel" id="fraudPanel">
+            <div style="flex:1;overflow-y:auto;padding:16px;">
+                <div class="control-section">
+                    <div class="control-label">🛡️ DETECTOR DE FRAUDE</div>
+                    <input type="text" id="fraudInput" placeholder="Analiza una transacción..." style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg2);color:var(--txt);margin-bottom:12px;">
+                    <button onclick="analyzeTransaction()" style="width:100%;">Analizar</button>
+                    <div class="translate-result" id="fraudResult"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL API KEY -->
+<div class="modal-overlay" id="apiModal">
+    <div class="modal-box">
+        <div class="modal-title">🔑 Configurar API Key</div>
+        <div class="modal-text">Ingresa tu API key de Anthropic<br><a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a></div>
+        <input type="password" id="apiKeyInput" placeholder="sk-ant-..." autocomplete="off">
+        <div class="modal-buttons">
+            <button class="modal-btn modal-btn-cancel" onclick="closeApiModal()">Cancelar</button>
+            <button class="modal-btn" onclick="saveApiKey()">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════════
+// CONFIGURACIÓN
+// ════════════════════════════════════════════════════════════════
+
+const MODELS = ['claude-sonnet-4-5','claude-opus-4-1','claude-sonnet-4-6','claude-opus-4-6','claude-3-5-sonnet-20241022'];
+let currentModel = MODELS[0];
+let modelErrors = {};
+let chatHistory = [];
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+const SYSTEM = `Eres JULS, asistente personal de DATESEG MX.
+Tu rol: ayudar con tecnología automotriz, seguridad familiar, análisis anti-fraude.
+Responde en español. Sé conciso y profesional.`;
+
+// ════════════════════════════════════════════════════════════════
+// MODAL API KEY
+// ════════════════════════════════════════════════════════════════
+
+function openApiModal(){document.getElementById('apiModal').classList.add('show');setTimeout(()=>document.getElementById('apiKeyInput').focus(),100);}
+function closeApiModal(){document.getElementById('apiModal').classList.remove('show');}
+function saveApiKey(){const key=document.getElementById('apiKeyInput').value.trim();if(!key||!key.startsWith('sk-ant-')){alert('❌ API Key inválida');return;}localStorage.setItem('juls_api_key',key);document.getElementById('apiKeyInput').value='';closeApiModal();updateStatus();alert('✅ API Key guardada');}
+function updateStatus(){const hasKey=!!localStorage.getItem('juls_api_key');const btn=document.getElementById('statusBtn');if(hasKey){btn.classList.add('active');btn.textContent='✅';}else{btn.classList.remove('active');btn.textContent='🔑';}}
+
+// ════════════════════════════════════════════════════════════════
+// CALL CLAUDE
+// ════════════════════════════════════════════════════════════════
+
+async function callClaude(userMsg,ctx=[]){
+    const apiKey=localStorage.getItem('juls_api_key');
+    if(!apiKey){openApiModal();throw new Error('API Key requerida');}
+    const msgs=[...ctx,{role:'user',content:userMsg}];
+    try{
+        const res=await fetch('https://api.anthropic.com/v1/messages',{
+            method:'POST',
+            headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+            body:JSON.stringify({model:currentModel,max_tokens:1024,system:SYSTEM,messages:msgs})
+        });
+        const data=await res.json();
+        if(!res.ok){
+            const emsg=(data.error&&data.error.message)||'';
+            // Modelo inexistente/no autorizado -> saltar YA al siguiente
+            if(res.status===404||/model|not_found|does not exist|invalid.*model/i.test(emsg)){
+                const n=MODELS.indexOf(currentModel)+1;
+                if(n<MODELS.length){currentModel=MODELS[n];return callClaude(userMsg,ctx);}
+                throw new Error('Ningún modelo disponible. Revisa tu API key en console.anthropic.com');
+            }
+            modelErrors[currentModel]=(modelErrors[currentModel]||0)+1;
+            if(modelErrors[currentModel]>=3){const n=MODELS.indexOf(currentModel)+1;if(n<MODELS.length){currentModel=MODELS[n];return callClaude(userMsg,ctx);}}
+            throw new Error(emsg||'Error API');
+        }
+        modelErrors[currentModel]=0;
+        return data.content[0].text;
+    }catch(e){console.error(e);throw e;}
+}
+
+// ════════════════════════════════════════════════════════════════
+// CHAT
+// ════════════════════════════════════════════════════════════════
+
+async function sendChat(){
+    const input=document.getElementById('chatIn');const msg=input.value.trim();if(!msg)return;
+    const msgs=document.getElementById('msgs');
+    const userDiv=document.createElement('div');userDiv.className='msg user';userDiv.textContent=msg;msgs.appendChild(userDiv);msgs.scrollTop=msgs.scrollHeight;
+    input.value='';input.disabled=true;
+    try{
+        const response=await callClaude(msg,chatHistory);
+        chatHistory.push({role:'user',content:msg});chatHistory.push({role:'assistant',content:response});
+        const botDiv=document.createElement('div');botDiv.className='msg bot';botDiv.innerHTML=`<div class="bot-name">👑 JULS</div>${response}`;msgs.appendChild(botDiv);msgs.scrollTop=msgs.scrollHeight;
+        speakES(response);
+    }catch(e){
+        const errDiv=document.createElement('div');errDiv.className='msg bot';errDiv.innerHTML=`<div class="bot-name">❌ Error</div>${e.message}`;msgs.appendChild(errDiv);msgs.scrollTop=msgs.scrollHeight;
+    }finally{input.disabled=false;input.focus();}
+}
+
+function chatMic(){
+    const btn=document.getElementById('chatMicBtn');
+    startMic('es-MX',
+        (text)=>{document.getElementById('chatIn').value=text;sendChat();},
+        ()=>{btn.textContent='🔴';},
+        ()=>{btn.textContent='🎤';}
+    );
+}
+
+// ════════════════════════════════════════════════════════════════
+// VOZ
+// ════════════════════════════════════════════════════════════════
+
+let voiceRec=null;
+let isRecording=false;
+
+function toggleVoice(){
+    const orb=document.getElementById('voiceOrb');
+    const status=document.getElementById('voiceStatus');
+    const result=document.getElementById('voiceResult');
+
+    if(isRecording){
+        try{voiceRec&&voiceRec.stop();}catch(e){}
+        isRecording=false;orb.classList.remove('recording');status.textContent='Toca para hablar';
+        return;
+    }
+
+    voiceRec=startMic('es-MX',
+        async (text)=>{
+            result.innerHTML='<div style="color:var(--txtD);font-size:11px;">TÚ DIJISTE</div>'+text;
+            status.textContent='⏳ JULS está pensando...';
+            try{
+                const resp=await callClaude(text,chatHistory);
+                chatHistory.push({role:'user',content:text});
+                chatHistory.push({role:'assistant',content:resp});
+                result.innerHTML='<div style="color:var(--txtD);font-size:11px;">TÚ DIJISTE</div>'+text
+                    +'<div style="color:var(--orange);font-size:11px;margin-top:10px;font-weight:800;">👑 JULS RESPONDE</div>'
+                    +'<div style="color:var(--txt);">'+resp+'</div>';
+                status.textContent='🔊 JULS está hablando...';
+                speakES(resp);
+                setTimeout(()=>{status.textContent='Toca para hablar';},1200);
+            }catch(e){
+                result.innerHTML='<div style="color:var(--red);">❌ '+e.message+'</div>';
+                status.textContent='Toca para hablar';
+                isRecording=false;orb.classList.remove('recording');
+            }
+        },
+        ()=>{isRecording=true;orb.classList.add('recording');status.textContent='🎤 Escuchando... habla ahora';},
+        ()=>{isRecording=false;orb.classList.remove('recording');}
+    );
+}
+
+
+// ════════════════════════════════════════════════════════════════
+// MOTOR DE VOZ (TTS) — carga de voces + desbloqueo
+// ════════════════════════════════════════════════════════════════
+
+let VOICES=[];
+let ttsUnlocked=false;
+
+function loadVoices(){
+    if(!window.speechSynthesis)return;
+    VOICES=window.speechSynthesis.getVoices()||[];
+}
+loadVoices();
+if(window.speechSynthesis){
+    window.speechSynthesis.onvoiceschanged=loadVoices;
+}
+
+// Los navegadores móviles bloquean TTS hasta que hay un gesto del usuario.
+function unlockTTS(){
+    if(ttsUnlocked||!window.speechSynthesis)return;
+    try{
+        const u=new SpeechSynthesisUtterance(' ');
+        u.volume=0;
+        window.speechSynthesis.speak(u);
+        ttsUnlocked=true;
+        loadVoices();
+    }catch(e){}
+}
+document.addEventListener('click',unlockTTS,{once:false});
+document.addEventListener('touchstart',unlockTTS,{once:false});
+
+function pickVoice(langPrefix){
+    if(!VOICES.length)loadVoices();
+    return VOICES.find(v=>v.lang.toLowerCase().startsWith(langPrefix)&&/female|mujer|mónica|monica|paulina|samantha|google/i.test(v.name))
+        || VOICES.find(v=>v.lang.toLowerCase().startsWith(langPrefix))
+        || null;
+}
+
+function speakLang(txt,langPrefix,langCode,rate){
+    if(!window.speechSynthesis||!txt)return;
+    unlockTTS();
+    try{
+        window.speechSynthesis.cancel();
+        const clean=txt.replace(/[*_#`>]/g,'').trim().substring(0,300);
+        if(!clean)return;
+        const u=new SpeechSynthesisUtterance(clean);
+        u.lang=langCode;
+        u.rate=rate||1.0;
+        u.pitch=1.05;
+        const v=pickVoice(langPrefix);
+        if(v)u.voice=v;
+        // Chrome a veces se "duerme": lo reactivamos
+        setTimeout(()=>{try{window.speechSynthesis.resume();}catch(e){}},100);
+        window.speechSynthesis.speak(u);
+    }catch(e){console.error('TTS:',e);}
+}
+
+function speakES(txt){speakLang(txt,'es','es-MX',1.0);}
+function speakEN(txt){speakLang(txt,'en','en-US',0.92);}
+
+// ════════════════════════════════════════════════════════════════
+// MICRÓFONO — helper único con manejo de errores
+// ════════════════════════════════════════════════════════════════
+
+function startMic(langCode,onText,onStart,onEnd){
+    if(!SR){
+        alert('⚠️ Tu navegador no soporta micrófono.\n\nUsa Chrome o Edge.');
+        onEnd&&onEnd();return;
+    }
+    if(location.protocol!=='https:'&&location.hostname!=='localhost'&&location.hostname!=='127.0.0.1'){
+        alert('⚠️ El micrófono necesita HTTPS.\n\nAbre la página con https:// o desde localhost.');
+        onEnd&&onEnd();return;
+    }
+    unlockTTS();
+    let r;
+    try{r=new SR();}catch(e){alert('No se pudo iniciar el micrófono');onEnd&&onEnd();return;}
+    r.lang=langCode;
+    r.continuous=false;
+    r.interimResults=false;
+    r.maxAlternatives=1;
+    let got=false;
+    r.onstart=()=>{onStart&&onStart();};
+    r.onresult=(e)=>{got=true;onText(e.results[0][0].transcript);};
+    r.onerror=(e)=>{
+        const msgs={
+            'not-allowed':'❌ Permiso denegado. Activa el micrófono en los ajustes del navegador (candado junto a la URL).',
+            'service-not-allowed':'❌ Permiso denegado por el sistema.',
+            'no-speech':'🔇 No se escuchó nada. Intenta de nuevo.',
+            'audio-capture':'❌ No se encontró micrófono.',
+            'network':'❌ Error de red en el reconocimiento de voz.'
+        };
+        alert(msgs[e.error]||('Error de micrófono: '+e.error));
+        onEnd&&onEnd();
+    };
+    r.onend=()=>{onEnd&&onEnd();};
+    try{r.start();}catch(e){onEnd&&onEnd();}
+    return r;
+}
+
+// ════════════════════════════════════════════════════════════════
+// ENGLISH TUTOR
+// ════════════════════════════════════════════════════════════════
+
+let tutorHistory=[];
+
+function tutorCfg(){
+    const parts=document.getElementById('tutorLang').value.split('|');
+    return {name:parts[0],prefix:parts[1],code:parts[2],flag:parts[3],
+            level:document.getElementById('tutorLevel').value,
+            topic:document.getElementById('tutorTopic').value};
+}
+
+function tutorSystem(){
+    const c=tutorCfg();
+    return `You are JULS, a warm language tutor for a Spanish-speaking adult from Mexico who is learning ${c.name}.
+Student level: ${c.level}. Topic: ${c.topic}.
+
+The student may write in Spanish OR in ${c.name}. Handle both:
+- If they wrote in ${c.name}: correct it.
+- If they wrote in Spanish: show them how to say it in ${c.name} (that IS the correction).
+
+Reply with EXACTLY these five lines, nothing else:
+
+TARGET: <what the student meant, written correctly in ${c.name}>
+TARGET_ES: <that same sentence translated to Spanish>
+WHY: <short explanation in Spanish of the mistake or of the key words. If it was already perfect, a one-line compliment in Spanish.>
+REPLY: <your natural conversational answer in ${c.name}, ${c.level} level, 1-2 sentences, ending with a question to keep the chat going>
+REPLY_ES: <that same answer translated to Spanish>
+
+Never write anything outside those five lines.`;
+}
+
+function resetTutor(){
+    tutorHistory=[];
+    const c=tutorCfg();
+    const box=document.getElementById('tutorMsgs');
+    const lvl=document.getElementById('tutorLevel').selectedOptions[0].text;
+    const topic=document.getElementById('tutorTopic').selectedOptions[0].text;
+    document.getElementById('tutorIn').placeholder=`Escribe en español o en ${c.name}...`;
+    box.innerHTML=`<div class="msg bot"><div class="bot-name">🏫 PROFE JULS</div>
+        Nueva sesión ${c.flag} <b>${c.name}</b> · ${lvl} · ${topic}<br><br>
+        ¡Empecemos! Escribe algo — en español o en ${c.name}, como quieras.</div>`;
+}
+
+async function sendTutor(){
+    const input=document.getElementById('tutorIn');const msg=input.value.trim();if(!msg)return;
+    const c=tutorCfg();
+    const box=document.getElementById('tutorMsgs');
+    const u=document.createElement('div');u.className='msg user';u.textContent=msg;box.appendChild(u);box.scrollTop=box.scrollHeight;
+    input.value='';input.disabled=true;
+    try{
+        const raw=await callClaudeSystem(msg,tutorHistory,tutorSystem());
+        tutorHistory.push({role:'user',content:msg});
+        tutorHistory.push({role:'assistant',content:raw});
+        if(tutorHistory.length>16)tutorHistory=tutorHistory.slice(-16);
+
+        const g=(re)=>{const m=raw.match(re);return m?m[1].trim():'';};
+        const target=g(/TARGET:\s*(.+)/i);
+        const targetEs=g(/TARGET_ES:\s*(.+)/i);
+        const why=g(/WHY:\s*(.+)/i);
+        const reply=g(/REPLY:\s*(.+)/i);
+        const replyEs=g(/REPLY_ES:\s*([\s\S]+)/i);
+        const ok=/perfect|correcto|muy bien|excelente/i.test(why);
+
+        const d=document.createElement('div');d.className='msg bot';
+        d.innerHTML=`<div class="bot-name">🏫 PROFE JULS</div>
+        <div style="background:${ok?'rgba(0,255,136,.08)':'rgba(255,149,0,.08)'};border-left:3px solid ${ok?'var(--green)':'var(--orange)'};padding:8px 10px;border-radius:6px;margin-bottom:10px;">
+            <div style="color:${ok?'var(--green)':'var(--orange)'};font-weight:800;font-size:11px;margin-bottom:5px;">${ok?'✅ CORRECTO':'✏️ ASÍ SE DICE'}</div>
+            <div style="color:var(--cyan);font-weight:600;">${c.flag} ${target}</div>
+            <div style="color:var(--txtD);font-size:12px;margin-top:3px;">🇲🇽 ${targetEs}</div>
+            <div style="color:var(--txtD);font-size:11px;margin-top:7px;border-top:1px solid var(--bdr);padding-top:6px;">💡 ${why}</div>
+        </div>
+        <div style="color:var(--txt);">${c.flag} ${reply}</div>
+        <div style="color:var(--txtD);font-size:12px;margin-top:4px;font-style:italic;">🇲🇽 ${replyEs}</div>
+        <button onclick="speakLang(this.dataset.t,'${c.prefix}','${c.code}',0.9)" data-t="${(target+'. '+reply).replace(/"/g,'&quot;')}"
+            style="margin-top:10px;padding:6px 12px;font-size:11px;">🔊 Escuchar en ${c.name}</button>`;
+        box.appendChild(d);box.scrollTop=box.scrollHeight;
+        speakLang(reply,c.prefix,c.code,0.9);
+    }catch(e){
+        const d=document.createElement('div');d.className='msg bot';d.innerHTML=`<div class="bot-name">❌ Error</div>${e.message}`;box.appendChild(d);
+    }finally{input.disabled=false;input.focus();}
+}
+
+function tutorMic(){
+    const btn=document.getElementById('tutorMicBtn');
+    const c=tutorCfg();
+    const useTarget=confirm(`¿Vas a hablar en ${c.name}?\n\nAceptar = ${c.name}\nCancelar = Español`);
+    startMic(useTarget?c.code:'es-MX',
+        (text)=>{document.getElementById('tutorIn').value=text;sendTutor();},
+        ()=>{btn.textContent='🔴';},
+        ()=>{btn.textContent='🎤';}
+    );
+}
+
+async function callClaudeSystem(userMsg,ctx,sys){
+    const apiKey=localStorage.getItem('juls_api_key');
+    if(!apiKey){openApiModal();throw new Error('API Key requerida');}
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+        body:JSON.stringify({model:currentModel,max_tokens:600,system:sys,messages:[...ctx,{role:'user',content:userMsg}]})
+    });
+    const data=await res.json();
+    if(!res.ok){
+        const emsg=(data.error&&data.error.message)||'';
+        if(res.status===404||/model|not_found|does not exist|invalid.*model/i.test(emsg)){
+            const n=MODELS.indexOf(currentModel)+1;
+            if(n<MODELS.length){currentModel=MODELS[n];return callClaudeSystem(userMsg,ctx,sys);}
+            throw new Error('Ningún modelo disponible. Revisa tu API key.');
+        }
+        modelErrors[currentModel]=(modelErrors[currentModel]||0)+1;
+        if(modelErrors[currentModel]>=3){const n=MODELS.indexOf(currentModel)+1;if(n<MODELS.length){currentModel=MODELS[n];return callClaudeSystem(userMsg,ctx,sys);}}
+        throw new Error(emsg||'Error API');
+    }
+    return data.content[0].text;
+}
+
+// ════════════════════════════════════════════════════════════════
+// MODO LLAMADA — Traducción en vivo bidireccional
+// ════════════════════════════════════════════════════════════════
+
+let autoCall=false;
+let callBusy=false;
+let callTurns=[];
+
+function callCfg(side){
+    const raw=document.getElementById(side==='A'?'callLangA':'callLangB').value.split('|');
+    const other=document.getElementById(side==='A'?'callLangB':'callLangA').value.split('|');
+    return {code:raw[0],name:raw[1],flag:raw[2],
+            toCode:other[0],toName:other[1],toFlag:other[2],
+            prefix:raw[0].split('-')[0],toPrefix:other[0].split('-')[0]};
+}
+
+let callListening=false;
+
+function callSpeak(side){
+    if(callBusy||callListening)return;
+    callListening=true;
+    const c=callCfg(side);
+    const orb=document.getElementById(side==='A'?'orbA':'orbB');
+    const status=document.getElementById('callStatus');
+
+    startMic(c.code,
+        async (text)=>{
+            callBusy=true;
+            status.textContent='⏳ Traduciendo...';
+            addCallLine(side,c.flag,text,'…');
+            try{
+                const out=await callClaudeSystem(text,[],
+                    `You are a live phone interpreter. The speaker talks in ${c.name}; render it into natural spoken ${c.toName}.
+
+Reply in EXACTLY this format, nothing else:
+TRAD: <the translation, natural spoken register, no quotes>
+NOTA: <only if something needs explaining: an idiom, sarcasm, a cultural reference, an ambiguity, an implied tone, or a number/date worth confirming. Write this note in Spanish, max 12 words. If nothing needs explaining, write exactly NADA>`);
+                const clean=out.trim();
+                const mT=clean.match(/TRAD:\s*([\s\S]*?)(?:\nNOTA:|$)/);
+                const mN=clean.match(/NOTA:\s*([\s\S]*)/);
+                const trad=(mT?mT[1]:clean).trim();
+                const nota=(mN?mN[1]:'').trim();
+                const notaOk=(nota&&!/^(nada|-+|n\/a|none|ninguna)$/i.test(nota))?nota:'';
+                updateLastCallLine(trad,c.toFlag,notaOk);
+                callTurns.push({side:side,orig:text,trans:trad,from:c.name,to:c.toName,t:new Date().toLocaleTimeString()});
+                status.textContent='🔊 Reproduciendo...';
+                speakLang(trad,c.toPrefix,c.toCode,0.95);
+                callTurns[callTurns.length-1].nota=notaOk;
+                setTimeout(()=>{
+                    callBusy=false;
+                    status.textContent=autoCall?'🔁 Automático — esperando...':'Toca un lado para hablar';
+                    if(autoCall)setTimeout(()=>callSpeak(side==='A'?'B':'A'),700);
+                },Math.min(trad.length*70,7000));
+            }catch(e){
+                updateLastCallLine('❌ '+e.message,'');
+                callBusy=false;callListening=false;
+                status.textContent='Toca un lado para hablar';
+                if(autoCall){autoCall=false;
+                    const b=document.getElementById('autoCallBtn');
+                    b.textContent='🔁 Modo automático (manos libres)';b.style.background='';}
+            }
+        },
+        ()=>{callListening=true;orb.classList.add('recording');status.textContent='🎤 Escuchando '+c.flag+' '+c.name+'...';},
+        ()=>{
+            orb.classList.remove('recording');
+            callListening=false;
+            if(!callBusy){
+                status.textContent=autoCall?'🔁 Automático — esperando...':'Toca un lado para hablar';
+                // Si nadie habló, el ciclo automático debe seguir vivo
+                if(autoCall)setTimeout(()=>{if(autoCall&&!callBusy)callSpeak(side);},900);
+            }
+        }
+    );
+}
+
+function addCallLine(side,flag,orig,trans){
+    const log=document.getElementById('callLog');
+    const d=document.createElement('div');
+    d.className='call-line';
+    d.style.cssText=`background:var(--bg2);border-left:3px solid ${side==='A'?'var(--orange)':'var(--purple)'};padding:8px 10px;border-radius:6px;margin-bottom:8px;`;
+    d.innerHTML=`<div style="color:${side==='A'?'var(--orange)':'var(--purple)'};font-size:10px;font-weight:800;">${flag} ${side==='A'?'TÚ':'ELLOS'}</div>
+        <div style="color:var(--txtD);font-size:12px;margin-top:2px;">${orig}</div>
+        <div class="call-trans" style="color:var(--cyan);font-size:13px;margin-top:5px;font-weight:600;">${trans}</div>
+        <div class="call-nota" style="color:var(--orange);font-size:10px;margin-top:4px;font-style:italic;"></div>`;
+    log.appendChild(d);log.scrollTop=log.scrollHeight;
+}
+
+function updateLastCallLine(trans,flag,nota){
+    const lines=document.querySelectorAll('#callLog .call-line');
+    if(!lines.length)return;
+    const el=lines[lines.length-1];
+    el.querySelector('.call-trans').innerHTML=(flag?flag+' ':'')+trans;
+    const nEl=el.querySelector('.call-nota');
+    if(nEl)nEl.innerHTML=nota?('💡 '+nota):'';
+}
+
+function toggleAutoCall(){
+    autoCall=!autoCall;
+    const btn=document.getElementById('autoCallBtn');
+    btn.textContent=autoCall?'⏹️ Detener modo automático':'🔁 Modo automático (manos libres)';
+    btn.style.background=autoCall?'linear-gradient(135deg,var(--red),#ff5588)':'';
+    document.getElementById('callStatus').textContent=autoCall?'🔁 Automático activo — empieza a hablar':'Toca un lado para hablar';
+    if(autoCall&&!callBusy&&!callListening)callSpeak('A');
+}
+
+function exportCallLog(){
+    if(!callTurns.length){alert('No hay conversación que exportar');return;}
+    let txt='CONVERSACIÓN TRADUCIDA — JULS / DATESEG MX\n'+new Date().toLocaleString()+'\n'+'='.repeat(50)+'\n\n';
+    callTurns.forEach(t=>{txt+=`[${t.t}] ${t.side==='A'?'TÚ':'ELLOS'} (${t.from})\n  ${t.orig}\n  → (${t.to}) ${t.trans}\n${t.nota?'  💡 '+t.nota+'\n':''}\n`;});
+    downloadFile(txt,'conversacion-juls-'+Date.now()+'.txt','text/plain');
+}
+
+function downloadFile(content,name,type){
+    const blob=new Blob([content],{type:type||'text/plain'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);a.download=name;a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+
+// ════════════════════════════════════════════════════════════════
+// ARCHIVOS — importar fotos y documentos
+// ════════════════════════════════════════════════════════════════
+
+let loadedFile=null;
+
+function handleFile(ev){
+    const f=ev.target.files[0];if(!f)return;
+    const prev=document.getElementById('filePreview');
+    const isImg=f.type.startsWith('image/');
+    const reader=new FileReader();
+
+    reader.onload=(e)=>{
+        if(isImg){
+            const b64=e.target.result.split(',')[1];
+            loadedFile={kind:'image',media:f.type,data:b64,name:f.name};
+            prev.innerHTML=`<img src="${e.target.result}" style="max-width:100%;max-height:220px;border-radius:8px;border:1px solid var(--orange);">
+                <div style="color:var(--green);font-size:11px;margin-top:6px;">✅ ${f.name} (${Math.round(f.size/1024)} KB)</div>`;
+        }else if(f.type==='application/pdf'){
+            const b64=e.target.result.split(',')[1];
+            loadedFile={kind:'pdf',media:'application/pdf',data:b64,name:f.name};
+            prev.innerHTML=`<div style="color:var(--green);font-size:12px;">📄 ${f.name} (${Math.round(f.size/1024)} KB) — PDF listo</div>`;
+        }else{
+            loadedFile={kind:'text',data:e.target.result,name:f.name};
+            const snip=e.target.result.substring(0,300);
+            prev.innerHTML=`<div style="color:var(--green);font-size:12px;">📄 ${f.name} (${Math.round(f.size/1024)} KB)</div>
+                <pre style="color:var(--txtD);font-size:10px;background:var(--bg2);padding:8px;border-radius:6px;margin-top:6px;max-height:120px;overflow:auto;white-space:pre-wrap;">${snip.replace(/[<>]/g,'')}${e.target.result.length>300?'\n...':''}</pre>`;
+        }
+    };
+    if(isImg||f.type==='application/pdf')reader.readAsDataURL(f);
+    else reader.readAsText(f);
+}
+
+async function askFile(preset){
+    if(!loadedFile){alert('Primero carga un archivo o foto');return;}
+    const q=preset||document.getElementById('filePrompt').value.trim()||'Describe y analiza esto en detalle.';
+    const out=document.getElementById('fileResult');
+    out.innerHTML='⏳ Analizando...';
+    try{
+        let content;
+        if(loadedFile.kind==='image'){
+            content=[{type:'image',source:{type:'base64',media_type:loadedFile.media,data:loadedFile.data}},{type:'text',text:q}];
+        }else if(loadedFile.kind==='pdf'){
+            content=[{type:'document',source:{type:'base64',media_type:'application/pdf',data:loadedFile.data}},{type:'text',text:q}];
+        }else{
+            content=`Archivo: ${loadedFile.name}\n\n---\n${loadedFile.data.substring(0,60000)}\n---\n\n${q}`;
+        }
+        const r=await callClaudeRaw([{role:'user',content:content}],'Eres JULS. Responde en español, claro y directo.',2048);
+        out.innerHTML=r.replace(/\n/g,'<br>');
+    }catch(e){out.innerHTML='<span style="color:var(--red);">❌ '+e.message+'</span>';}
+}
+
+function exportFileResult(){
+    const t=document.getElementById('fileResult').innerText.trim();
+    if(!t){alert('No hay resultado que exportar');return;}
+    downloadFile('JULS — Análisis\n'+new Date().toLocaleString()+'\n\n'+t,'juls-analisis-'+Date.now()+'.txt','text/plain');
+}
+
+async function callClaudeRaw(messages,sys,maxTok){
+    const apiKey=localStorage.getItem('juls_api_key');
+    if(!apiKey){openApiModal();throw new Error('API Key requerida');}
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+        body:JSON.stringify({model:currentModel,max_tokens:maxTok||1024,system:sys,messages:messages})
+    });
+    const data=await res.json();
+    if(!res.ok){
+        const emsg=(data.error&&data.error.message)||'';
+        if(res.status===404||/model|not_found|does not exist/i.test(emsg)){
+            const n=MODELS.indexOf(currentModel)+1;
+            if(n<MODELS.length){currentModel=MODELS[n];return callClaudeRaw(messages,sys,maxTok);}
+        }
+        throw new Error(emsg||'Error API');
+    }
+    return data.content.filter(b=>b.type==='text').map(b=>b.text).join('\n');
+}
+
+// ════════════════════════════════════════════════════════════════
+// CONTACTOS — WhatsApp, Llamadas, Recordatorios, Agenda
+// ════════════════════════════════════════════════════════════════
+
+// ── Agenda (persiste en localStorage) ───────────────────────────
+let agenda = JSON.parse(localStorage.getItem('juls_agenda')||'[]');
+
+function renderAgenda(){
+    const el=document.getElementById('agendaList');
+    if(!el)return;
+    if(!agenda.length){el.innerHTML='<div style="color:var(--txtD);font-size:12px;">Sin contactos aún</div>';return;}
+    el.innerHTML=agenda.map((c,i)=>`
+        <div style="background:var(--bg2);border-radius:8px;padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:10px;">
+            <div style="flex:1;">
+                <div style="color:var(--txt);font-weight:700;font-size:14px;">${c.nombre}</div>
+                <div style="color:var(--txtD);font-size:11px;">${c.numero}</div>
+            </div>
+            <button onclick="llamarAgenda(${i})" style="padding:6px 10px;background:var(--green);color:#000;border-radius:6px;font-size:13px;">📞</button>
+            <button onclick="waAgenda(${i})" style="padding:6px 10px;background:var(--purple);border-radius:6px;font-size:13px;">💬</button>
+            <button onclick="borrarAgenda(${i})" style="padding:6px 10px;background:var(--red);border-radius:6px;font-size:13px;">🗑️</button>
+        </div>`).join('');
+}
+
+function agregarAgenda(){
+    const n=document.getElementById('agendaNombre').value.trim();
+    const num=limpiarNumero(document.getElementById('agendaNumero').value.trim());
+    if(!n||!num){alert('Pon nombre y número');return;}
+    agenda.push({nombre:n,numero:num});
+    localStorage.setItem('juls_agenda',JSON.stringify(agenda));
+    document.getElementById('agendaNombre').value='';
+    document.getElementById('agendaNumero').value='';
+    renderAgenda();
+}
+
+function borrarAgenda(i){
+    agenda.splice(i,1);
+    localStorage.setItem('juls_agenda',JSON.stringify(agenda));
+    renderAgenda();
+}
+
+function llamarAgenda(i){
+    document.getElementById('callName').value=agenda[i].nombre;
+    document.getElementById('callNumber').value=agenda[i].numero;
+    realizarLlamada();
+}
+
+function waAgenda(i){
+    document.getElementById('waName').value=agenda[i].nombre;
+    document.getElementById('waNumber').value=agenda[i].numero;
+    document.getElementById('waMessage').value='';
+}
+
+// ── WhatsApp ─────────────────────────────────────────────────────
+function enviarWhatsApp(){
+    const num=limpiarNumero(document.getElementById('waNumber').value.trim());
+    const msg=document.getElementById('waMessage').value.trim();
+    const st=document.getElementById('waStatus');
+    if(!num){st.textContent='❌ Pon el número primero';st.style.color='var(--red)';return;}
+    const url='https://wa.me/'+num+(msg?'?text='+encodeURIComponent(msg):'');
+    window.open(url,'_blank');
+    st.textContent='✅ Abriendo WhatsApp...';st.style.color='var(--green)';
+    setTimeout(()=>st.textContent='',3000);
+}
+
+function dictarMensajeWA(){
+    const st=document.getElementById('waStatus');
+    st.textContent='🎤 Escuchando...';st.style.color='var(--orange)';
+    startMic('es-MX',(texto)=>{
+        document.getElementById('waMessage').value=texto;
+        st.textContent='✅ Mensaje listo. Revísalo y pica WhatsApp.';
+        st.style.color='var(--green)';
+    },()=>{},()=>{if(!document.getElementById('waMessage').value)st.textContent='';});
+}
+
+// ── Llamadas ─────────────────────────────────────────────────────
+function realizarLlamada(){
+    const num=limpiarNumero(document.getElementById('callNumber').value.trim());
+    const nombre=document.getElementById('callName').value.trim();
+    if(!num){alert('Pon el número primero');return;}
+    if(nombre)hablarTTS('Llamando a '+nombre);
+    window.location.href='tel:+'+num.replace(/^\+/,'');
+}
+
+function dictarNumero(){
+    startMic('es-MX',(texto)=>{
+        // Extrae solo dígitos de lo que se dijo
+        const digitos=texto.replace(/[^0-9]/g,'');
+        if(digitos.length>=7){
+            document.getElementById('callNumber').value=digitos;
+            hablarTTS('Número capturado: '+digitos.split('').join(' '));
+        } else {
+            alert('No entendí el número, intenta otra vez');
+        }
+    },()=>{},()=>{});
+}
+
+// ── Recordatorios (Notification API) ────────────────────────────
+let recordatorios=[];
+
+async function crearRecordatorio(){
+    const txt=document.getElementById('reminderText').value.trim();
+    const mins=parseInt(document.getElementById('reminderMins').value)||10;
+    const st=document.getElementById('reminderStatus');
+    if(!txt){st.textContent='❌ Escribe de qué te recuerdo';return;}
+
+    // Pedir permiso de notificaciones
+    if(Notification.permission==='default'){
+        await Notification.requestPermission();
+    }
+    if(Notification.permission!=='granted'){
+        st.textContent='❌ Activa las notificaciones del navegador';
+        st.style.color='var(--red)';
+        return;
+    }
+
+    const ms=mins*60*1000;
+    const hora=new Date(Date.now()+ms).toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+    const id=setTimeout(()=>{
+        new Notification('⏰ JULS — Recordatorio',{
+            body:txt,
+            icon:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%230a0d18"/><text y=".9em" font-size="90">⏰</text></svg>'
+        });
+        hablarTTS('Recordatorio: '+txt);
+        // Quitar de la lista
+        recordatorios=recordatorios.filter(r=>r.id!==id);
+        renderRecordatorios();
+    },ms);
+
+    recordatorios.push({id,txt,hora,mins});
+    renderRecordatorios();
+    document.getElementById('reminderText').value='';
+    st.textContent='✅ Te aviso a las '+hora;
+    st.style.color='var(--green)';
+    setTimeout(()=>st.textContent='',4000);
+}
+
+function cancelarRecordatorio(id){
+    clearTimeout(id);
+    recordatorios=recordatorios.filter(r=>r.id!==id);
+    renderRecordatorios();
+}
+
+function renderRecordatorios(){
+    const el=document.getElementById('reminderList');
+    if(!el)return;
+    if(!recordatorios.length){el.innerHTML='';return;}
+    el.innerHTML=recordatorios.map(r=>`
+        <div style="background:var(--bg2);border-left:3px solid var(--orange);border-radius:6px;padding:8px 12px;margin-bottom:8px;display:flex;align-items:center;gap:10px;">
+            <div style="flex:1;">
+                <div style="color:var(--txt);font-size:13px;">${r.txt}</div>
+                <div style="color:var(--orange);font-size:10px;">⏰ A las ${r.hora}</div>
+            </div>
+            <button onclick="cancelarRecordatorio(${r.id})" style="padding:4px 10px;background:var(--red);border-radius:6px;font-size:12px;">✕</button>
+        </div>`).join('');
+}
+
+// ── Utilidades ───────────────────────────────────────────────────
+function limpiarNumero(n){
+    // Deja solo dígitos y quita el + del inicio si lo tiene
+    return n.replace(/[\s\-\(\)]/g,'').replace(/^\+/,'');
+}
+
+function hablarTTS(texto){
+    if(!('speechSynthesis' in window))return;
+    const u=new SpeechSynthesisUtterance(texto);
+    u.lang='es-MX';u.rate=1.0;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+}
+
+// Renderizar agenda al cargar la pestaña
+document.addEventListener('DOMContentLoaded',()=>renderAgenda());
+
+// ════════════════════════════════════════════════════════════════
+// TRADUCTOR
+// ════════════════════════════════════════════════════════════════
+
+async function translateText(){
+    const text=document.getElementById('transInput').value.trim();if(!text)return;
+    const lang=document.getElementById('transLang').value;
+    document.getElementById('transResult').textContent='⏳ Traduciendo...';
+    try{
+        const response=await callClaude(`Traduce esto al ${lang}: ${text}`,chatHistory);
+        document.getElementById('transResult').textContent='✅ '+response;
+    }catch(e){document.getElementById('transResult').textContent='❌ '+e.message;}
+}
+
+// ════════════════════════════════════════════════════════════════
+// WEB GENERATOR
+// ════════════════════════════════════════════════════════════════
+
+async function generateWeb(){
+    const prompt=document.getElementById('webPrompt').value.trim();if(!prompt)return;
+    document.getElementById('webResult').value='⏳ Generando...';
+    try{
+        const response=await callClaude(`Genera código HTML/CSS/JS minimalista para: ${prompt}. Responde SOLO con el código sin explicaciones.`,chatHistory);
+        document.getElementById('webResult').value=response;
+    }catch(e){document.getElementById('webResult').value='❌ '+e.message;}
+}
+
+function copyWebCode(){const code=document.getElementById('webResult').value;navigator.clipboard.writeText(code);alert('✅ Código copiado');}
+
+// ════════════════════════════════════════════════════════════════
+// ANTI-FRAUDE
+// ════════════════════════════════════════════════════════════════
+
+async function analyzeTransaction(){
+    const tx=document.getElementById('fraudInput').value.trim();if(!tx)return;
+    document.getElementById('fraudResult').textContent='⏳ Analizando...';
+    try{
+        const response=await callClaude(`Analiza esta transacción para detectar fraude: ${tx}. Sé conciso.`,chatHistory);
+        document.getElementById('fraudResult').textContent='🛡️ '+response;
+    }catch(e){document.getElementById('fraudResult').textContent='❌ '+e.message;}
+}
+
+// ════════════════════════════════════════════════════════════════
+// TABS
+// ════════════════════════════════════════════════════════════════
+
+function switchTab(name,el){
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.getElementById(name+'Panel').classList.add('active');el.classList.add('active');
+}
+
+// ════════════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════════════
+
+window.addEventListener('load',()=>{updateStatus();setTimeout(()=>{if(!localStorage.getItem('juls_api_key')){openApiModal();}},500);});
+</script>
+
+</body>
+</html>
